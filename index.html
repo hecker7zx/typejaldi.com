@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeJaldi.com - Sketch Typing Test</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Permanent+Marker&family=Rock+Salt&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sketch: {
+                            orange: '#e8874b',
+                            purple: '#7b5ea7',
+                            teal: '#4a9c8c',
+                            ink: '#2c2416',
+                            paper: '#fdfaf3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
             --paper: #fdfaf3;
@@ -34,12 +53,16 @@
         }
 
         body {
-            background-color: #e8e0d5;
-            background-image:
-                radial-gradient(ellipse at 20% 20%, #f0e8d8 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 80%, #e8dcc8 0%, transparent 60%),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: auto, auto, 120px 120px;
+            background-color: #c4a484; /* Light wood color */
+            background-image: 
+                /* Wood grain pattern */
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+                /* Lighting effect */
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 80%),
+                /* Paper noise */
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            background-size: 40px 40px, 40px 40px, auto, auto;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -48,29 +71,57 @@
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Cursor particle trail */
+        .cursor-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            border-radius: 50%;
+            mix-blend-mode: multiply;
+            animation: particleFade 0.8s ease-out forwards;
+        }
+        @keyframes particleFade {
+            0% { opacity: 0.9; transform: scale(1) translateY(0); }
+            100% { opacity: 0; transform: scale(0) translateY(-20px); }
+        }
+
+        /* Click ripple */
+        .ripple {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: rippleExpand 0.6s ease-out forwards;
+            border: 2px solid var(--sketch-orange);
+        }
+        @keyframes rippleExpand {
+            0%   { width: 0; height: 0; opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+            100% { width: 120px; height: 120px; opacity: 0; transform: translate(-50%, -50%) scale(1); }
         }
 
         /* Floating doodle decorations */
-        body::before {
-            content: '✏️';
+        .floating-doodle {
             position: fixed;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+            color: var(--ink-faded);
+            filter: blur(0.5px);
+            transition: transform 0.2s ease-out;
+        }
+        .doodle-pencil {
             top: 8%;
             left: 6%;
-            font-size: 2.5rem;
-            opacity: 0.5;
             transform: rotate(-15deg);
-            pointer-events: none;
             animation: floatDoodle 6s ease-in-out infinite;
         }
-        body::after {
-            content: '📝';
-            position: fixed;
+        .doodle-note {
             bottom: 10%;
             right: 7%;
-            font-size: 3rem;
-            opacity: 0.4;
             transform: rotate(10deg);
-            pointer-events: none;
             animation: floatDoodle 8s ease-in-out infinite reverse;
         }
         @keyframes floatDoodle {
@@ -94,9 +145,9 @@
             position: fixed;
             pointer-events: none;
             opacity: 0.35;
-            font-size: 1.8rem;
             animation: twinkle 3s ease-in-out infinite;
             z-index: 0;
+            color: var(--sketch-orange);
         }
         .doodle-star:nth-child(1) {
             top: 15%;
@@ -127,17 +178,78 @@
             }
         }
 
+        @keyframes notebookEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) rotate(-2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px) rotate(-0.5deg); }
+            75% { transform: translateX(4px) rotate(0.5deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-5px) rotate(calc(var(--rot, 0deg) + 1deg)); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+            70% { transform: scale(1.05) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(var(--rot, 0deg)); }
+        }
+
+        @keyframes wordCorrectPop {
+            0%   { transform: scale(1); }
+            40%  { transform: scale(1.18) rotate(-1deg); filter: brightness(1.3); }
+            70%  { transform: scale(0.95) rotate(0.5deg); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        @keyframes letterPop {
+            0%   { transform: scale(1) translateY(0); }
+            50%  { transform: scale(1.4) translateY(-4px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+        @keyframes wpmSurge {
+            0%   { transform: scale(1); color: var(--sketch-orange); }
+            50%  { transform: scale(1.35) rotate(-3deg); color: #ff5500; text-shadow: 0 0 16px rgba(255,85,0,0.7); }
+            100% { transform: scale(1); color: var(--sketch-orange); text-shadow: none; }
+        }
+        @keyframes glowPulse {
+            0%,100% { box-shadow: 0 0 0 4px rgba(232,135,75,0.15), 0 0 20px rgba(232,135,75,0); }
+            50%      { box-shadow: 0 0 0 6px rgba(232,135,75,0.3), 0 0 35px rgba(232,135,75,0.25); }
+        }
+        @keyframes inkDrip {
+            0%   { transform: translateY(0) scaleY(1); opacity: 1; }
+            60%  { transform: translateY(12px) scaleY(1.4); opacity: 0.8; }
+            100% { transform: translateY(30px) scaleY(0.5); opacity: 0; }
+        }
+        @keyframes streakFire {
+            0%,100% { text-shadow: none; transform: scale(1); }
+            25%  { transform: scale(1.12) rotate(-2deg); text-shadow: 0 0 10px #ff7700; }
+            75%  { transform: scale(1.08) rotate(2deg); text-shadow: 0 0 18px #ff4400; }
+        }
+
         /* Main notebook container */
         .notebook {
             background:
                 linear-gradient(to right, var(--red-margin) 38px, transparent 38px),
                 linear-gradient(to bottom, var(--blue-line) 1px, transparent 1px),
+                /* Subtle paper texture */
+                url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23paperNoise)' opacity='0.02'/%3E%3C/svg%3E"),
                 var(--paper);
-            background-size: 100% var(--line-height), 100% var(--line-height);
+            background-size: 100% var(--line-height), 100% var(--line-height), 200px 200px, auto;
             border-radius: 12px 18px 255px 15px / 18px 225px 15px 255px;
             box-shadow:
-                3px 4px 8px rgba(0, 0, 0, 0.15),
-                6px 8px 20px rgba(0, 0, 0, 0.08),
+                10px 15px 30px rgba(0, 0, 0, 0.25),
+                20px 30px 60px rgba(0, 0, 0, 0.15),
                 inset 0 0 0 2px rgba(139, 119, 80, 0.3),
                 0 0 0 4px rgba(180, 160, 130, 0.4);
             width: 100%;
@@ -145,10 +257,34 @@
             min-height: 580px;
             padding: 30px 30px 25px 55px;
             position: relative;
-            z-index: 1;
-            transition: all 0.3s ease;
+            z-index: 10;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: notebookEntrance 0.8s ease-out backwards;
             /* Spiral binding effect */
             border-left: 3px dashed #c4b89a;
+        }
+
+        /* Coffee stain doodle */
+        .notebook::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(101, 67, 33, 0.08) 0%, transparent 70%);
+            border: 1px solid rgba(101, 67, 33, 0.05);
+            border-radius: 50% 40% 60% 45%;
+            transform: rotate(15deg);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Sketchy Icon Filter */
+        svg.lucide {
+            filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.1));
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .notebook::before {
@@ -274,8 +410,8 @@
         }
         .mode-btn:hover {
             background: #fffdf7;
-            transform: rotate(0deg) scale(1.04);
-            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+            transform: rotate(0deg) scale(1.04) translateY(-2px);
+            box-shadow: 4px 6px 0px rgba(0, 0, 0, 0.15);
             border-color: var(--ink);
         }
         .mode-btn.active {
@@ -314,10 +450,19 @@
             font-weight: 600;
             color: var(--ink);
             background: rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
             padding: 5px 12px;
             border-radius: 20px 6px 18px 8px / 8px 20px 6px 16px;
             border: 1.5px dashed rgba(0, 0, 0, 0.2);
             transform: rotate(var(--rot, 0deg));
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .stat-item:hover {
+            transform: scale(1.1) rotate(0deg);
+            background: rgba(255, 255, 255, 0.8);
+            border-style: solid;
+            border-color: var(--sketch-orange);
         }
         .stat-item:nth-child(1) {
             --rot: -0.5deg;
@@ -340,6 +485,10 @@
             color: var(--sketch-orange);
             min-width: 38px;
             text-align: center;
+            transition: color 0.3s ease;
+        }
+        .stat-value.surge {
+            animation: wpmSurge 0.5s ease-out;
         }
         .stat-label {
             font-size: 0.8rem;
@@ -367,13 +516,13 @@
             max-height: 155px;
             overflow: hidden;
             cursor: text;
-            transition: border-color 0.3s;
-            position: relative;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
         }
         .word-display-wrapper.focused {
             border-color: var(--sketch-orange);
             border-style: solid;
-            box-shadow: 0 0 0 4px rgba(232, 135, 75, 0.1);
+            background: rgba(255, 255, 255, 0.55);
+            animation: glowPulse 2s ease-in-out infinite;
         }
         .word-display-wrapper.blurred {
             border-style: dashed;
@@ -423,6 +572,9 @@
             font-weight: 500;
             text-decoration: none;
         }
+        .word.correct-pop {
+            animation: wordCorrectPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         .word.incorrect {
             color: var(--red);
             text-decoration: line-through;
@@ -430,9 +582,14 @@
             text-decoration-color: rgba(217, 74, 74, 0.5);
             text-underline-offset: 5px;
         }
+        .word.shake {
+            animation: shake 0.2s ease-in-out infinite;
+        }
         .word .letter-correct {
             color: var(--green);
             font-weight: 600;
+            display: inline-block;
+            animation: letterPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .word .letter-incorrect {
             color: var(--red);
@@ -457,6 +614,7 @@
             border-radius: 1px;
             position: relative;
             top: 2px;
+            transition: left 0.1s ease-out;
         }
         @keyframes blinkCaret {
             0%,
@@ -590,11 +748,13 @@
             border-radius: 16px 6px 18px 4px / 6px 16px 4px 18px;
             transform: rotate(-0.8deg);
             box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-            transition: all 0.15s;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
         .restart-btn:hover {
-            transform: rotate(0deg) scale(1.04);
-            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+            transform: rotate(0deg) scale(1.04) translateY(-2px);
+            box-shadow: 4px 6px 0px rgba(0, 0, 0, 0.15);
             border-color: var(--ink);
         }
         .hint-text {
@@ -627,14 +787,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
         }
         .results-overlay.visible {
             opacity: 1;
@@ -654,6 +815,8 @@
             text-align: center;
             position: relative;
             transform: rotate(-0.5deg);
+            --rot: -0.5deg;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         .results-card h2 {
             font-family: var(--font-marker);
@@ -661,6 +824,7 @@
             color: var(--ink);
             margin-bottom: 16px;
             transform: rotate(-1deg);
+            animation: notebookEntrance 0.5s ease-out both;
         }
         .results-grid {
             display: grid;
@@ -668,11 +832,21 @@
             gap: 12px;
             margin-bottom: 16px;
         }
+        .result-stat:nth-child(1) { animation: popIn 0.4s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .result-stat:nth-child(2) { animation: popIn 0.4s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .result-stat:nth-child(3) { animation: popIn 0.4s 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .result-stat:nth-child(4) { animation: popIn 0.4s 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
         .result-stat {
             background: rgba(255, 255, 255, 0.5);
             padding: 10px;
             border-radius: 12px 4px 14px 6px / 6px 12px 4px 14px;
             border: 1.5px dashed rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .result-stat:hover {
+            transform: scale(1.08) rotate(-1deg);
+            border-style: solid;
+            border-color: var(--sketch-orange);
         }
         .result-stat .big {
             font-family: var(--font-marker);
@@ -741,17 +915,22 @@
             pointer-events: none;
             z-index: 200;
             font-size: 2rem;
-            animation: confettiFall 1.5s ease-out forwards;
+            animation: confettiFall var(--dur, 2s) ease-in forwards;
         }
         @keyframes confettiFall {
             0% {
                 transform: translateY(-100px) rotate(0deg) scale(1);
                 opacity: 1;
             }
+            60% { opacity: 1; }
             100% {
-                transform: translateY(105vh) rotate(720deg) scale(0.3);
+                transform: translateY(105vh) rotate(900deg) scale(0.2);
                 opacity: 0;
             }
+        }
+        /* Streak fire glow on high streaks */
+        .streak-fire {
+            animation: streakFire 0.6s ease-in-out infinite alternate;
         }
 
         /* Responsive */
@@ -823,78 +1002,448 @@
             }
         }
 
-        /* Auth Modal */
+        /* ── Custom free-type area ── */
+        .custom-type-area {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .custom-type-area.active { display: flex; }
+        .custom-textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px 16px;
+            font-family: var(--font-sketch);
+            font-size: 1.25rem;
+            background: rgba(255,255,255,0.4);
+            border: 2px dashed rgba(0,0,0,0.2);
+            border-radius: 8px 16px 6px 14px / 14px 8px 16px 6px;
+            outline: none;
+            resize: vertical;
+            color: var(--ink);
+            line-height: 1.6;
+            transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+        }
+        .custom-textarea:focus {
+            border-color: var(--sketch-orange);
+            border-style: solid;
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 0 0 4px rgba(232,135,75,0.15);
+        }
+        .custom-textarea::placeholder { color: var(--ink-faded); }
+        .custom-hint {
+            font-size: 0.82rem;
+            color: var(--ink-faded);
+            font-style: italic;
+            text-align: right;
+        }
+
+        /* ── Auth Modal – Premium redesign ── */
         .auth-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(2px);
-            z-index: 200;
+            inset: 0;
+            background: rgba(20,15,10,0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
             display: none;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            perspective: 1000px;
         }
+        .auth-overlay.open { display: flex; }
+
         .auth-card {
-            background: var(--paper);
-            border: 2px solid var(--ink);
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 15px 5px 20px 8px / 8px 18px 6px 22px;
-            box-shadow: 10px 10px 0px var(--ink-light);
-            position: relative;
-            transform: rotate(-1deg);
-        }
-        .auth-card h2 {
-            font-family: var(--font-marker);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .auth-form input {
+            background:
+                linear-gradient(to bottom, var(--blue-line) 1px, transparent 1px),
+                var(--paper);
+            background-size: 100% 28px;
+            border: 3px solid var(--ink-light);
+            padding: 0;
             width: 100%;
+            max-width: 440px;
+            border-radius: 12px 18px 4px 20px / 20px 4px 18px 12px;
+            box-shadow:
+                15px 15px 0px rgba(92,79,58,0.2),
+                0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+            transform-style: preserve-3d;
+            animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: rotateY(-20deg) rotateX(10deg) scale(0.9) translateY(40px); }
+            100% { opacity: 1; transform: rotateY(0deg) rotateX(0deg) scale(1) translateY(0); }
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 12px; right: 14px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--ink-faded);
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+        }
+        .auth-close:hover { background: rgba(0,0,0,0.08); color: var(--ink); }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .auth-logo span {
+            font-family: var(--font-marker);
+            font-size: 1.7rem;
+            color: var(--ink);
+        }
+        .auth-logo span .jaldi { color: var(--sketch-orange); }
+
+        /* Tab switcher */
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            border-radius: 12px 4px 10px 6px / 6px 10px 4px 12px;
+            overflow: hidden;
+            border: 2px solid var(--ink-light);
+            margin-bottom: 22px;
+        }
+        .auth-tab {
+            flex: 1;
             padding: 10px;
-            margin-bottom: 12px;
             font-family: var(--font-sketch);
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 700;
             background: transparent;
             border: none;
-            border-bottom: 2px solid var(--blue-line);
+            cursor: pointer;
+            color: var(--ink-faded);
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .auth-tab.active {
+            background: var(--sketch-orange);
+            color: #fff;
+        }
+        .auth-tab:not(.active):hover { background: rgba(0,0,0,0.05); color: var(--ink); }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .auth-field {
+            position: relative;
+            margin-bottom: 14px;
+        }
+        .auth-field label {
+            display: block;
+            font-family: var(--font-sketch);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink-faded);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+        .auth-form input[type="text"],
+        .auth-form input[type="email"],
+        .auth-form input[type="password"] {
+            width: 100%;
+            padding: 11px 14px;
+            font-family: var(--font-sketch);
+            font-size: 1.05rem;
+            background: rgba(255,255,255,0.65);
+            border: 2px solid var(--blue-line);
+            border-radius: 8px 4px 10px 4px / 4px 10px 4px 8px;
             outline: none;
+            color: var(--ink);
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
         }
         .auth-form input:focus {
-            border-bottom-color: var(--sketch-orange);
+            border-color: var(--sketch-orange);
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 0 3px rgba(232,135,75,0.18);
+        }
+        .auth-error {
+            color: var(--red);
+            font-size: 0.88rem;
+            font-family: var(--font-sketch);
+            margin-bottom: 10px;
+            min-height: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .auth-success {
+            color: var(--green);
+            font-size: 0.88rem;
+            font-family: var(--font-sketch);
+            margin-bottom: 10px;
+            min-height: 20px;
+            font-weight: 600;
+            text-align: center;
         }
         .auth-btn {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: var(--sketch-orange);
-            color: white;
+            color: #fff;
+            border: 2px solid #c06a30;
+            font-family: var(--font-marker);
+            font-size: 1.15rem;
+            cursor: pointer;
+            border-radius: 14px 4px 16px 6px / 6px 16px 4px 14px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+            transition: all 0.18s;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
+        }
+        .auth-btn:active { transform: translateY(0); }
+        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1.5px;
+            background: var(--blue-line);
+            border-radius: 2px;
+        }
+        .auth-divider span {
+            font-family: var(--font-sketch);
+            font-size: 0.85rem;
+            color: var(--ink-faded);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #fff;
+            border: 2px solid #dadce0;
+            border-radius: 12px 4px 14px 6px / 6px 14px 4px 12px;
+            font-family: var(--font-sketch);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #3c4043;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.08);
+            transition: all 0.18s;
+            text-decoration: none;
+        }
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: #bbb;
+            box-shadow: 3px 4px 0 rgba(0,0,0,0.12);
+            transform: translateY(-1px);
+        }
+        .google-btn svg { flex-shrink: 0; }
+
+        .auth-footer-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--ink-faded);
+            font-family: var(--font-sketch);
+            margin-top: 14px;
+            line-height: 1.5;
+        }
+
+        /* Floating Account Tab */
+        .account-tab {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--paper);
+            border: 2px solid var(--ink-light);
+            border-right: none;
+            padding: 12px 8px;
+            border-radius: 12px 0 0 12px;
+            cursor: pointer;
+            z-index: 100;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: var(--font-marker);
+            font-size: 0.9rem;
+            box-shadow: -4px 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .account-tab:hover {
+            padding-right: 15px;
+            background: #fff;
+            color: var(--sketch-orange);
+        }
+        .account-tab i {
+            transform: rotate(90deg);
+        }
+
+        /* ── Profile Modal ── */
+        .profile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(20,15,10,0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .profile-overlay.open { display: flex; }
+
+        .profile-card {
+            background:
+                linear-gradient(to right, var(--red-margin) 38px, transparent 38px),
+                linear-gradient(to bottom, var(--blue-line) 1px, transparent 1px),
+                var(--paper);
+            background-size: 100% 28px;
+            border: 3px solid var(--ink-light);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px 18px 4px 20px / 20px 4px 18px 12px;
+            box-shadow:
+                15px 15px 0px rgba(92,79,58,0.2),
+                0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+            padding: 40px 30px 30px 60px;
+            animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--paper-dark);
+            border: 3px solid var(--sketch-orange);
+            border-radius: 50% 45% 55% 40% / 40% 55% 45% 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--sketch-orange);
+            box-shadow: 4px 4px 0px rgba(232, 135, 75, 0.2);
+        }
+        .profile-name {
+            font-family: var(--font-marker);
+            font-size: 2rem;
+            color: var(--ink);
+            margin-bottom: 5px;
+        }
+        .profile-title {
+            font-family: var(--font-sketch);
+            font-size: 1.2rem;
+            color: var(--sketch-purple);
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .profile-stat-box {
+            background: rgba(255,255,255,0.4);
+            border: 2px dashed rgba(0,0,0,0.15);
+            padding: 15px;
+            border-radius: 12px 6px 14px 4px / 6px 14px 4px 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .profile-stat-box:hover {
+            transform: scale(1.05) rotate(-1deg);
+            border-style: solid;
+            border-color: var(--sketch-orange);
+            background: #fff;
+        }
+        .profile-stat-value {
+            display: block;
+            font-family: var(--font-marker);
+            font-size: 1.8rem;
+            color: var(--sketch-orange);
+        }
+        .profile-stat-label {
+            font-size: 0.85rem;
+            color: var(--ink-faded);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .profile-xp-section {
+            margin-bottom: 25px;
+        }
+        .profile-xp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .profile-close-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--ink);
+            color: #fff;
             border: none;
             font-family: var(--font-marker);
             font-size: 1.2rem;
             cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: 12px 4px 14px 6px / 6px 14px 4px 12px;
+            transition: all 0.2s;
         }
-        .auth-toggle {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-decoration: underline;
+        .profile-close-btn:hover {
+            background: var(--sketch-orange);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 135, 75, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <!-- Floating doodle stars -->
-    <span class="doodle-star" style="top:15%;right:12%;">⭐</span>
-    <span class="doodle-star" style="top:25%;left:10%;">✨</span>
-    <span class="doodle-star" style="bottom:20%;left:15%;">💫</span>
-    <span class="doodle-star" style="top:40%;right:8%;font-size:1rem;">🌟</span>
+    <!-- Floating Account Tab (Pop up tab) -->
+    <div class="account-tab group" id="account-tab" onclick="toggleAuthModal()">
+        <i data-lucide="user" class="group-hover:scale-110 transition-transform"></i>
+        <span id="account-tab-label" class="mt-2 text-xs uppercase tracking-tighter opacity-70 group-hover:opacity-100">Account</span>
+    </div>
+
+    <!-- Floating doodle icons -->
+    <div class="floating-doodle doodle-pencil"><i data-lucide="pencil" size="48"></i></div>
+    <div class="floating-doodle doodle-note"><i data-lucide="file-text" size="60"></i></div>
+    <span class="doodle-star" style="top:15%;right:12%;"><i data-lucide="star"></i></span>
+    <span class="doodle-star" style="top:25%;left:10%;"><i data-lucide="sparkle" size="20"></i></span>
+    <span class="doodle-star" style="bottom:20%;left:15%;"><i data-lucide="moon"></i></span>
+    <span class="doodle-star" style="top:40%;right:8%;"><i data-lucide="sun" size="18"></i></span>
 
     <!-- Notebook -->
     <div class="notebook" id="notebook">
@@ -904,7 +1453,7 @@
                 <a href="#" class="logo" onclick="restartTest();return false;">
                     Type<span class="jaldi">Jaldi</span>.com
                 </a>
-                <span class="tagline">~ sketch edition ✍️</span>
+                <span class="tagline">~ sketch edition <i data-lucide="pencil" style="display:inline-block; vertical-align:middle; width:16px; height:16px;"></i></span>
             </div>
             <div id="user-section">
                 <button id="login-btn" class="mode-btn">Login / Sign Up</button>
@@ -917,35 +1466,36 @@
 
         <!-- Mode selector -->
         <div class="mode-selector" id="modeSelector">
-            <button class="mode-btn" data-time="15">⏱ 15s</button>
-            <button class="mode-btn active" data-time="30">⏱ 30s</button>
-            <button class="mode-btn" data-time="60">⏱ 60s</button>
-            <button class="mode-btn" data-time="120">⏱ 120s</button>
-            <button class="mode-btn" data-time="0">♾️ Free</button>
+            <button class="mode-btn" data-time="15"><i data-lucide="timer" class="inline-block w-4 h-4 mr-1"></i> 15s</button>
+            <button class="mode-btn active" data-time="30"><i data-lucide="timer" class="inline-block w-4 h-4 mr-1"></i> 30s</button>
+            <button class="mode-btn" data-time="60"><i data-lucide="timer" class="inline-block w-4 h-4 mr-1"></i> 60s</button>
+            <button class="mode-btn" data-time="120"><i data-lucide="timer" class="inline-block w-4 h-4 mr-1"></i> 120s</button>
+            <button class="mode-btn" data-time="0"><i data-lucide="infinity" class="inline-block w-4 h-4 mr-1"></i> Free</button>
+            <button class="mode-btn" id="customModeBtn" data-time="0" data-custom="true"><i data-lucide="edit-3" class="inline-block w-4 h-4 mr-1"></i> Custom</button>
         </div>
 
         <!-- Stats bar -->
         <div class="stats-bar">
             <div class="stat-item">
-                <span class="stat-icon">⚡</span>
+                <span class="stat-icon"><i data-lucide="zap" class="text-yellow-500 w-5 h-5"></i></span>
                 <span class="stat-value" id="wpmDisplay">0</span>
                 <span class="stat-label">WPM</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-                <span class="stat-icon">🎯</span>
+                <span class="stat-icon"><i data-lucide="target" class="text-blue-500 w-5 h-5"></i></span>
                 <span class="stat-value" id="accDisplay">100</span>
                 <span class="stat-label">%</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-                <span class="stat-icon">⏱️</span>
+                <span class="stat-icon"><i data-lucide="clock" class="text-sketch-orange w-5 h-5"></i></span>
                 <span class="stat-value" id="timerDisplay">30</span>
                 <span class="stat-label">s</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-                <span class="stat-icon">🔥</span>
+                <span class="stat-icon"><i data-lucide="flame" class="text-red-500 w-5 h-5"></i></span>
                 <span class="stat-value" id="streakDisplay">0</span>
                 <span class="stat-label">streak</span>
             </div>
@@ -959,9 +1509,21 @@
             </div>
         </div>
 
+        <!-- Custom free-type area -->
+        <div class="custom-type-area" id="customTypeArea">
+            <textarea
+                class="custom-textarea"
+                id="customTextarea"
+                placeholder="✍️ Type anything you want here… a story, an idea, practice text, anything!"
+                spellcheck="false"
+                autocomplete="off"
+            ></textarea>
+            <span class="custom-hint" id="customCharCount">0 chars &nbsp;·&nbsp; 0 words</span>
+        </div>
+
         <!-- XP section -->
         <div class="xp-section">
-            <div class="level-badge" id="levelBadge">📊 Lv.1 Doodle</div>
+            <div class="level-badge flex items-center justify-center" id="levelBadge"><i data-lucide="seedling" class="w-4 h-4 mr-1"></i> Lv.1 Doodle</div>
             <div class="xp-bar-outer">
                 <div class="xp-bar-inner" id="xpBarInner" style="width: 0%;"></div>
             </div>
@@ -970,7 +1532,9 @@
 
         <!-- Bottom bar -->
         <div class="bottom-bar">
-            <button class="restart-btn" onclick="restartTest()" title="Restart (Tab)">🔄 Redraw</button>
+            <button class="restart-btn flex items-center gap-2" onclick="restartTest()" title="Restart (Tab)">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Redraw
+            </button>
             <span class="hint-text">press <strong>Tab</strong> to restart &nbsp;|&nbsp; <span id="streakIndicator"></span></span>
         </div>
 
@@ -978,10 +1542,56 @@
         <input type="text" class="hidden-input" id="hiddenInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
 
+    <!-- Profile Modal -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="profile-card">
+            <button class="auth-close" onclick="closeProfile()">&times;</button>
+            
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i data-lucide="user" size="40"></i>
+                </div>
+                <h2 class="profile-name" id="profileName">Guest</h2>
+                <div class="profile-title" id="profileTitle">Doodle Beginner</div>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-box">
+                    <span class="profile-stat-value" id="profileBestWPM">0</span>
+                    <span class="profile-stat-label">Best WPM</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-value" id="profileTotalTests">0</span>
+                    <span class="profile-stat-label">Tests Done</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-value" id="profileAvgWPM">0</span>
+                    <span class="profile-stat-label">Avg. WPM</span>
+                </div>
+                <div class="profile-stat-box">
+                    <span class="profile-stat-value" id="profileAvgAcc">0%</span>
+                    <span class="profile-stat-label">Avg. Accuracy</span>
+                </div>
+            </div>
+
+            <div class="profile-xp-section">
+                <div class="profile-xp-header">
+                    <span id="profileLevel">Level 1</span>
+                    <span class="text-xs text-ink-faded" id="profileXPText">0 / 100 XP</span>
+                </div>
+                <div class="xp-bar-outer" style="height: 18px;">
+                    <div class="xp-bar-inner" id="profileXPBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <button class="profile-close-btn" onclick="closeProfile()">Close Notebook</button>
+        </div>
+    </div>
+
     <!-- Results overlay -->
     <div class="results-overlay" id="resultsOverlay">
         <div class="results-card">
-            <h2>📋 Test Complete!</h2>
+            <h2 class="flex items-center justify-center gap-2"><i data-lucide="clipboard-check" class="text-sketch-orange"></i> Test Complete!</h2>
             <div class="results-grid">
                 <div class="result-stat"><span class="big" id="resultWPM">0</span><span class="lbl">WPM</span></div>
                 <div class="result-stat"><span class="big" id="resultAcc">100%</span><span class="lbl">Accuracy</span></div>
@@ -990,7 +1600,9 @@
             </div>
             <div class="xp-earned" id="xpEarnedDisplay">+0 XP</div>
             <div id="levelUpContainer"></div>
-            <button class="results-close-btn" onclick="closeResults()">✍️ Type Again!</button>
+            <button class="results-close-btn flex items-center justify-center gap-2 mx-auto" onclick="closeResults()">
+                <i data-lucide="edit-2"></i> Type Again!
+            </button>
         </div>
     </div>
 
@@ -1012,7 +1624,7 @@
             const xpBarInner = document.getElementById('xpBarInner');
             const xpText = document.getElementById('xpText');
             const resultsOverlay = document.getElementById('resultsOverlay');
-            const modeBtns = document.querySelectorAll('.mode-btn');
+            const modeBtns = document.querySelectorAll('#modeSelector .mode-btn');
             const notebook = document.getElementById('notebook');
 
             // Result elements
@@ -1114,16 +1726,16 @@
             // LEVEL SYSTEM (persisted)
             // ──────────────────────────────────────
             const LEVEL_THRESHOLDS = [
-                { level: 1, xp: 0, title: 'Doodle Beginner', emoji: '🌱' },
-                { level: 2, xp: 100, title: 'Sketch Apprentice', emoji: '✏️' },
-                { level: 3, xp: 300, title: 'Ink Scratcher', emoji: '🖋️' },
-                { level: 4, xp: 600, title: 'Pencil Master', emoji: '✒️' },
-                { level: 5, xp: 1000, title: 'Pen Artist', emoji: '🎨' },
-                { level: 6, xp: 1500, title: 'Calligraphy Pro', emoji: '📜' },
-                { level: 7, xp: 2200, title: 'Type Wizard', emoji: '🧙' },
-                { level: 8, xp: 3000, title: 'Keyboard Sage', emoji: '⌨️' },
-                { level: 9, xp: 4000, title: 'Speed Demon', emoji: '⚡' },
-                { level: 10, xp: 5500, title: 'TypeJaldi Legend', emoji: '👑' },
+                { level: 1, xp: 0, title: 'Doodle Beginner', icon: 'seedling' },
+                { level: 2, xp: 100, title: 'Sketch Apprentice', icon: 'pencil' },
+                { level: 3, xp: 300, title: 'Ink Scratcher', icon: 'pen-tool' },
+                { level: 4, xp: 600, title: 'Pencil Master', icon: 'feather' },
+                { level: 5, xp: 1000, title: 'Pen Artist', icon: 'palette' },
+                { level: 6, xp: 1500, title: 'Calligraphy Pro', icon: 'scroll' },
+                { level: 7, xp: 2200, title: 'Type Wizard', icon: 'wand-2' },
+                { level: 8, xp: 3000, title: 'Keyboard Sage', icon: 'keyboard' },
+                { level: 9, xp: 4000, title: 'Speed Demon', icon: 'zap' },
+                { level: 10, xp: 5500, title: 'TypeJaldi Legend', icon: 'crown' },
             ];
 
             function getLevelData(totalXP) {
@@ -1142,7 +1754,7 @@
                 return {
                     level: currentLevelData.level,
                     title: currentLevelData.title,
-                    emoji: currentLevelData.emoji,
+                    icon: currentLevelData.icon,
                     xpInLevel,
                     xpNeeded,
                     progress,
@@ -1180,9 +1792,10 @@
 
             function updateLevelUI() {
                 const ld = getLevelData(userProgress.totalXP);
-                levelBadge.textContent = `${ld.emoji} Lv.${ld.level} ${ld.title}`;
+                levelBadge.innerHTML = `<i data-lucide="${ld.icon}" class="inline-block w-4 h-4 mr-1"></i> Lv.${ld.level} ${ld.title}`;
                 xpBarInner.style.width = ld.progress + '%';
                 xpText.textContent = `${ld.xpInLevel} / ${ld.xpNeeded} XP`;
+                lucide.createIcons();
             }
 
             function awardXP(wpm, accuracy, timeTaken, streak) {
@@ -1344,17 +1957,34 @@
             // ──────────────────────────────────────
             function updateLiveStats() {
                 if (!testStartTime) {
-                    wpmDisplay.textContent = '0';
-                    accDisplay.textContent = '100';
+                    animateValue(wpmDisplay, 0);
+                    animateValue(accDisplay, 100);
                     return;
                 }
                 const elapsedMinutes = (Date.now() - testStartTime) / 60000;
                 const netWPM = elapsedMinutes > 0.01 ? Math.round((correctKeystrokes / 5) / elapsedMinutes) : 0;
                 const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 100;
 
-                wpmDisplay.textContent = Math.max(0, netWPM);
-                accDisplay.textContent = accuracy;
+                animateValue(wpmDisplay, Math.max(0, netWPM));
+                animateValue(accDisplay, accuracy);
                 streakDisplay.textContent = currentStreak;
+            }
+
+            function animateValue(obj, end, duration = 300) {
+                const start = parseInt(obj.textContent) || 0;
+                if (start === end) return;
+                const range = end - start;
+                let startTime = null;
+
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = Math.min((timestamp - startTime) / duration, 1);
+                    obj.textContent = Math.floor(progress * range + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                }
+                window.requestAnimationFrame(step);
             }
 
             function updateTimerDisplay() {
@@ -1363,8 +1993,9 @@
 
             function updateStreakUI() {
                 if (currentStreak >= 5) {
+                    const fireClass = currentStreak >= 15 ? 'streak-fire' : '';
                     streakIndicator.innerHTML =
-                        `<span class="streak-indicator">🔥 ${currentStreak} word streak!</span>`;
+                        `<span class="streak-indicator ${fireClass}">🔥 ${currentStreak} word streak!</span>`;
                 } else if (currentStreak > 0 && currentStreak < 5) {
                     streakIndicator.innerHTML = '';
                 } else {
@@ -1462,6 +2093,7 @@
                     carets.forEach(c => c.remove());
                 }
             }
+            window.restartTest = restartTest;
 
             function restartTest() {
                 stopTimer();
@@ -1553,21 +2185,55 @@
                 levelUpContainer.innerHTML = '';
                 restartTest();
             }
+            window.closeResults = closeResults;
 
             function spawnConfetti() {
-                const emojis = ['🎉', '✨', '🌟', '💫', '⭐', '🎊', '✏️', '🖌️', '📝', '🔥'];
-                for (let i = 0; i < 20; i++) {
+                const emojis = ['🎉', '✨', '🌟', '💫', '⭐', '🎊', '✏️', '🖌️', '📝', '🔥', '🎈', '🏆'];
+                for (let i = 0; i < 40; i++) {
                     setTimeout(() => {
                         const confetti = document.createElement('span');
                         confetti.className = 'confetti';
                         confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                        confetti.style.left = Math.random() * 90 + '%';
-                        confetti.style.top = -(Math.random() * 100 + 20) + 'px';
-                        confetti.style.animationDuration = (1.2 + Math.random() * 2) + 's';
-                        confetti.style.fontSize = (1.5 + Math.random() * 2.5) + 'rem';
+                        confetti.style.left = Math.random() * 95 + '%';
+                        confetti.style.top = -(Math.random() * 80 + 20) + 'px';
+                        const dur = (1.5 + Math.random() * 2.5).toFixed(2);
+                        confetti.style.setProperty('--dur', dur + 's');
+                        confetti.style.fontSize = (1.2 + Math.random() * 3) + 'rem';
+                        confetti.style.animationTimingFunction = Math.random() > 0.5 ? 'ease-in' : 'ease-in-out';
                         document.body.appendChild(confetti);
-                        setTimeout(() => confetti.remove(), 3000);
-                    }, i * 30);
+                        setTimeout(() => confetti.remove(), parseFloat(dur) * 1000 + 200);
+                    }, i * 60);
+                }
+            }
+
+            // Mini ink spark particles on correct word
+            function spawnInkSpark(wordSpan) {
+                if (!wordSpan) return;
+                const rect = wordSpan.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const colors = ['#3d8b5e', '#e8874b', '#7b5ea7', '#4a9c8c'];
+                for (let i = 0; i < 6; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'cursor-particle';
+                    const angle = (i / 6) * Math.PI * 2;
+                    const dist = 20 + Math.random() * 20;
+                    p.style.cssText = `
+                        left: ${cx}px; top: ${cy}px;
+                        width: 7px; height: 7px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        transform: translate(-50%, -50%);
+                        animation: none;
+                        transition: all 0.4s ease-out;
+                    `;
+                    document.body.appendChild(p);
+                    requestAnimationFrame(() => {
+                        p.style.left = (cx + Math.cos(angle) * dist) + 'px';
+                        p.style.top = (cy + Math.sin(angle) * dist) + 'px';
+                        p.style.opacity = '0';
+                        p.style.transform = 'translate(-50%, -50%) scale(0)';
+                    });
+                    setTimeout(() => p.remove(), 450);
                 }
             }
 
@@ -1626,12 +2292,15 @@
                     const wordSpan = wordDisplayInner.querySelector(`.word[data-index="${currentWordIndex}"]`);
                     if (wordSpan) {
                         wordSpan.dataset.wasCorrect = isCorrect ? 'true' : 'false';
-                        wordSpan.classList.remove('current');
+                        wordSpan.classList.remove('current', 'shake');
                         if (isCorrect) {
-                            wordSpan.classList.add('correct');
+                            wordSpan.classList.add('correct', 'correct-pop');
+                            setTimeout(() => wordSpan.classList.remove('correct-pop'), 400);
                             correctWordsCount++;
                             currentStreak++;
                             if (currentStreak > bestStreak) bestStreak = currentStreak;
+                            // Mini ink-spark on correct word
+                            spawnInkSpark(wordSpan);
                         } else {
                             wordSpan.classList.add('incorrect');
                             incorrectWordsCount++;
@@ -1666,6 +2335,18 @@
                 if (!testActive && value.length > 0) {
                     startTest();
                 }
+                
+                // Shake effect for typo
+                const targetWord = words[currentWordIndex] || '';
+                const currentWordSpan = wordDisplayInner.querySelector(`.word[data-index="${currentWordIndex}"]`);
+                if (currentWordSpan) {
+                    if (value.length > 0 && !targetWord.startsWith(value)) {
+                        currentWordSpan.classList.add('shake');
+                    } else {
+                        currentWordSpan.classList.remove('shake');
+                    }
+                }
+
                 refreshCurrentWordDisplay();
                 updateLiveStats();
                 scrollToCurrentWord();
@@ -1760,14 +2441,12 @@
             // MODE BUTTONS
             // ──────────────────────────────────────
             modeBtns.forEach(btn => {
+                if (btn.dataset.custom) return; // handled by custom mode listener below
                 btn.addEventListener('click', () => {
-                    if (testActive && !testFinished) {
-                        // Restart if mode changes during test
-                    }
                     modeBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     timerSeconds = parseInt(btn.dataset.time);
-                    activeMode = btn.textContent.toLowerCase().trim(); // Update activeMode
+                    activeMode = btn.textContent.toLowerCase().trim();
                     timeRemaining = timerSeconds;
                     updateTimerDisplay();
                     restartTest();
@@ -1778,8 +2457,9 @@
             // KEYBOARD SHORTCUTS
             // ──────────────────────────────────────
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Tab' && !e.target.closest('input') && !e.target.closest('button')) {
+                if (e.key === 'Tab' && !e.target.closest('input') && !e.target.closest('button') && e.target !== customTextarea) {
                     e.preventDefault();
+                    if (isCustomMode) return; // Tab does nothing in custom mode
                     restartTest();
                     return;
                 }
@@ -1834,131 +2514,305 @@
             }, 250);
 
             // ──────────────────────────────────────
-            // AUTHENTICATION LOGIC
+            // CURSOR TRAIL + CLICK RIPPLE
             // ──────────────────────────────────────
-            const authOverlay = document.getElementById('auth-overlay');
-            const authForm = document.getElementById('auth-form');
-            const authTitle = document.getElementById('auth-title');
-            const authBtn = document.getElementById('auth-submit');
-            const authToggle = document.getElementById('auth-toggle');
-            const loginBtn = document.getElementById('login-btn');
-            const userInfo = document.getElementById('user-info');
-            const usernameDisplay = document.getElementById('username-display');
-            const logoutBtn = document.getElementById('logout-btn');
-            const fullNameGroup = document.getElementById('full-name-group');
+            const PARTICLE_COLORS = ['#e8874b','#7b5ea7','#3d8b5e','#4a7fb5','#d94a4a','#4a9c8c'];
+            let lastParticleTime = 0;
 
-            let isLoginMode = true;
+            document.addEventListener('mousemove', (e) => {
+                const now = Date.now();
+                if (now - lastParticleTime < 40) return; // throttle
+                lastParticleTime = now;
+                const p = document.createElement('div');
+                p.className = 'cursor-particle';
+                const size = 6 + Math.random() * 8;
+                p.style.cssText = `
+                    left:${e.clientX}px;
+                    top:${e.clientY}px;
+                    width:${size}px;
+                    height:${size}px;
+                    background:${PARTICLE_COLORS[Math.floor(Math.random()*PARTICLE_COLORS.length)]};
+                    transform:translate(-50%,-50%);
+                    animation-duration:${0.5 + Math.random() * 0.4}s;
+                `;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 900);
+            });
 
-            function updateAuthUI() {
-                const token = localStorage.getItem('access_token');
-                const username = localStorage.getItem('username');
-                if (token && username) {
-                    loginBtn.style.display = 'none';
-                    userInfo.style.display = 'flex';
-                    usernameDisplay.textContent = username;
+            document.addEventListener('click', (e) => {
+                const r = document.createElement('div');
+                r.className = 'ripple';
+                r.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;`;
+                document.body.appendChild(r);
+                setTimeout(() => r.remove(), 700);
+            });
+
+            // Parallax background gradient on mouse move
+            document.addEventListener('mousemove', (e) => {
+                const xPct = (e.clientX / window.innerWidth * 100).toFixed(1);
+                const yPct = (e.clientY / window.innerHeight * 100).toFixed(1);
+                document.body.style.setProperty('--bx1', xPct + '%');
+                document.body.style.setProperty('--by1', yPct + '%');
+                document.body.style.setProperty('--bx2', (100 - xPct) + '%');
+                document.body.style.setProperty('--by2', (100 - yPct) + '%');
+            });
+
+            // WPM surge trigger
+            let lastWPM = 0;
+            setInterval(() => {
+                if (!testActive || testFinished) return;
+                const elapsed = testStartTime ? (Date.now() - testStartTime) / 60000 : 0;
+                if (elapsed < 0.05) return;
+                const wpm = Math.round((correctKeystrokes / 5) / elapsed);
+                if (wpm - lastWPM >= 10) {
+                    wpmDisplay.classList.remove('surge');
+                    void wpmDisplay.offsetWidth; // reflow
+                    wpmDisplay.classList.add('surge');
+                    setTimeout(() => wpmDisplay.classList.remove('surge'), 600);
+                }
+                lastWPM = wpm;
+            }, 1000);
+
+            // ────────────────────────────────────────────────────
+            // CUSTOM / FREE-TYPE MODE
+            // ────────────────────────────────────────────────────
+            const customTypeArea = document.getElementById('customTypeArea');
+            const customTextarea = document.getElementById('customTextarea');
+            const customCharCount = document.getElementById('customCharCount');
+            let isCustomMode = false;
+
+            function enterCustomMode() {
+                isCustomMode = true;
+                // Stop any running test
+                stopTimer();
+                testActive = false;
+                testFinished = false;
+                resultsOverlay.classList.remove('visible');
+                // Toggle UI
+                wordDisplayWrapper.style.display = 'none';
+                customTypeArea.classList.add('active');
+                // Deactivate all other mode buttons, activate Custom
+                modeBtns.forEach(b => b.classList.remove('active'));
+                document.getElementById('customModeBtn').classList.add('active');
+                // Stats not relevant in custom mode
+                wpmDisplay.textContent = '–';
+                accDisplay.textContent = '–';
+                streakDisplay.textContent = '–';
+                timerDisplay.textContent = '–';
+                customTextarea.focus();
+            }
+
+            function exitCustomMode() {
+                isCustomMode = false;
+                wordDisplayWrapper.style.display = '';
+                customTypeArea.classList.remove('active');
+                customTextarea.value = '';
+                customCharCount.textContent = '0 chars · 0 words';
+            }
+
+            customTextarea.addEventListener('input', () => {
+                const val = customTextarea.value;
+                const chars = val.length;
+                const words = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+                customCharCount.textContent = `${chars} chars \u00b7 ${words} word${words !== 1 ? 's' : ''}`;
+            });
+
+            // Wire Custom mode button (added to modeBtns querySelectorAll)
+            document.getElementById('customModeBtn').addEventListener('click', () => {
+                if (isCustomMode) {
+                    // clicking again while in custom exits it and goes to 30s default
+                    exitCustomMode();
+                    document.getElementById('customModeBtn').classList.remove('active');
+                    // activate 30s button
+                    modeBtns.forEach(b => { if (b.dataset.time === '30' && !b.dataset.custom) b.classList.add('active'); });
+                    timerSeconds = 30;
+                    timeRemaining = 30;
+                    updateTimerDisplay();
+                    restartTest();
                 } else {
-                    loginBtn.style.display = 'block';
-                    userInfo.style.display = 'none';
+                    enterCustomMode();
+                }
+            });
+
+            // Prevent regular mode buttons from activating custom mode display
+            modeBtns.forEach(btn => {
+                if (!btn.dataset.custom) {
+                    btn.addEventListener('click', () => {
+                        if (isCustomMode) exitCustomMode();
+                    });
+                }
+            });
+
+            // ────────────────────────────────────────────────────
+            // AUTHENTICATION & PROFILE LOGIC
+            // ────────────────────────────────────────────────────
+            const loginBtn        = document.getElementById('login-btn');
+            const logoutBtn       = document.getElementById('logout-btn');
+            const userInfo        = document.getElementById('user-info');
+            const usernameDisplay = document.getElementById('username-display');
+            const tabLabel        = document.getElementById('account-tab-label');
+
+            // Global toggle for the account tab
+            window.toggleAuthModal = function() {
+                const token = localStorage.getItem('access_token');
+                if (token) {
+                    showProfile();
+                } else {
+                    window.location.href = '/login';
+                }
+            };
+
+            function showProfile() {
+                const overlay = document.getElementById('profileOverlay');
+                if (overlay) {
+                    overlay.classList.add('open');
+                    updateProfileModalUI();
                 }
             }
 
-            loginBtn.addEventListener('click', () => {
-                authOverlay.style.display = 'flex';
-                hiddenInput.blur();
-            });
-
-            authToggle.addEventListener('click', () => {
-                isLoginMode = !isLoginMode;
-                authTitle.textContent = isLoginMode ? 'Login' : 'Sign Up';
-                authBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
-                authToggle.textContent = isLoginMode ? 'Need an account? Sign Up' : 'Already have an account? Login';
-                fullNameGroup.style.display = isLoginMode ? 'none' : 'block';
-            });
-
-            authOverlay.addEventListener('click', (e) => {
-                if (e.target === authOverlay) {
-                    authOverlay.style.display = 'none';
-                    hiddenInput.focus();
+            window.closeProfile = function() {
+                const overlay = document.getElementById('profileOverlay');
+                if (overlay) {
+                    overlay.classList.remove('open');
+                    if (!isCustomMode && hiddenInput) hiddenInput.focus();
                 }
-            });
+            };
 
-            authForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(authForm);
-                const data = Object.fromEntries(formData.entries());
+            async function updateAuthUI() {
+                const token = localStorage.getItem('access_token');
+                const username = localStorage.getItem('username');
                 
-                const endpoint = isLoginMode ? '/login' : '/register';
-                const body = isLoginMode ? 
-                    JSON.stringify({ username_or_email: data.username, password: data.password }) :
-                    JSON.stringify({ username: data.username, email: data.email, password: data.password, full_name: data.full_name });
+                if (token) {
+                    if (loginBtn) loginBtn.style.display = 'none';
+                    if (userInfo) userInfo.style.display = 'flex';
+                    if (username && usernameDisplay) usernameDisplay.textContent = username;
+                    if (username && tabLabel) tabLabel.textContent = username;
+                    
+                    try {
+                        const res = await fetch('/me', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.stats) {
+                                userProgress.bestWPM = data.stats.best_wpm;
+                                userProgress.testsCompleted = data.stats.total_tests;
+                                userProgress.totalXP = data.stats.total_xp || userProgress.totalXP;
+                                if (usernameDisplay) usernameDisplay.textContent = data.username;
+                                if (tabLabel) tabLabel.textContent = data.username;
+                                localStorage.setItem('username', data.username);
+                                updateLevelUI();
+                            }
+                        } else if (res.status === 401) {
+                            // Token expired
+                            logout();
+                        }
+                    } catch (err) {
+                        console.error('Auth sync failed:', err);
+                    }
+                } else {
+                    if (loginBtn) loginBtn.style.display = 'block';
+                    if (userInfo) userInfo.style.display = 'none';
+                    if (tabLabel) tabLabel.textContent = 'Account';
+                }
+            }
+
+            async function updateProfileModalUI() {
+                const token = localStorage.getItem('access_token');
+                if (!token) return;
 
                 try {
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: body
+                    const res = await fetch('/me', {
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        if (isLoginMode) {
-                            localStorage.setItem('access_token', result.access_token);
-                            localStorage.setItem('username', data.username);
-                            authOverlay.style.display = 'none';
-                            updateAuthUI();
-                            hiddenInput.focus();
-                        } else {
-                            // After register, switch to login
-                            isLoginMode = true;
-                            authToggle.click();
-                            alert('Registration successful! Please login.');
+                    if (res.ok) {
+                        const data = await res.json();
+                        const stats = data.stats || { best_wpm: 0, total_tests: 0, avg_wpm: 0, avg_accuracy: 0 };
+                        
+                        const nameEl = document.getElementById('profileName');
+                        const bestEl = document.getElementById('profileBestWPM');
+                        const testsEl = document.getElementById('profileTotalTests');
+                        const avgWpmEl = document.getElementById('profileAvgWPM');
+                        const avgAccEl = document.getElementById('profileAvgAcc');
+                        
+                        if (nameEl) nameEl.textContent = data.full_name || data.username;
+                        if (bestEl) bestEl.textContent = Math.round(stats.best_wpm);
+                        if (testsEl) testsEl.textContent = stats.total_tests;
+                        if (avgWpmEl) avgWpmEl.textContent = Math.round(stats.avg_wpm);
+                        if (avgAccEl) avgAccEl.textContent = Math.round(stats.avg_accuracy) + '%';
+                        
+                        // Leveling
+                        const ld = getLevelData(userProgress.totalXP);
+                        const lvlEl = document.getElementById('profileLevel');
+                        const titleEl = document.getElementById('profileTitle');
+                        const xpTxtEl = document.getElementById('profileXPText');
+                        const xpBarEl = document.getElementById('profileXPBar');
+                        
+                        if (lvlEl) lvlEl.textContent = `Level ${ld.level}`;
+                        if (titleEl) titleEl.textContent = ld.title;
+                        if (xpTxtEl) xpTxtEl.textContent = `${ld.xpInLevel} / ${ld.xpNeeded} XP`;
+                        if (xpBarEl) xpBarEl.style.width = ld.progress + '%';
+                        
+                        const avatarDiv = document.querySelector('.profile-avatar');
+                        if (avatarDiv) {
+                            avatarDiv.innerHTML = `<i data-lucide="${ld.icon}" size="40"></i>`;
+                            lucide.createIcons();
                         }
-                    } else {
-                        const err = await response.json();
-                        alert(err.detail || 'Authentication failed');
                     }
                 } catch (err) {
-                    console.error(err);
-                    alert('Server error');
+                    console.error('Profile update failed:', err);
                 }
-            });
+            }
 
-            logoutBtn.addEventListener('click', () => {
+            function logout() {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('username');
                 updateAuthUI();
-                hiddenInput.focus();
-            });
+                if (!isCustomMode && hiddenInput) hiddenInput.focus();
+            }
 
-            // Initial UI update
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    window.location.href = '/login';
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+
+            // Google OAuth token pickup
+            (function checkGoogleToken() {
+                const params = new URLSearchParams(window.location.search);
+                const token = params.get('token');
+                const username = params.get('username');
+                if (token && username) {
+                    localStorage.setItem('access_token', token);
+                    localStorage.setItem('username', username);
+                    history.replaceState({}, '', '/');
+                    updateAuthUI();
+                }
+            })();
+
+            // Initial UI Sync
             updateAuthUI();
+            updateLevelUI();
 
-            console.log('🖊️  TypeJaldi.com - Sketch Edition Ready!');
-            console.log('   Level ' + getLevelData(userProgress.totalXP).level + ' - ' + getLevelData(userProgress
-                .totalXP).title);
-            console.log('   Total XP: ' + userProgress.totalXP);
-            console.log('   Best WPM: ' + userProgress.bestWPM);
-            console.log('   Tests Completed: ' + userProgress.testsCompleted);
-            console.log('   ✍️  Start typing to begin!');
+            console.log('TypeJaldi Ready - Sketch Edition');
+            lucide.createIcons();
+
+            // Parallax effect
+            document.addEventListener('mousemove', e => {
+                const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+                const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+                document.querySelectorAll('.floating-doodle, .doodle-star').forEach((el, index) => {
+                    const depth = (index % 3 + 1) * 0.5;
+                    el.style.transform = `translate(${moveX * depth}px, ${moveY * depth}px) rotate(${el.dataset.rot || 0}deg)`;
+                });
+            });
         })();
     </script>
-    </div>
 
-    <!-- Auth Modal -->
-    <div id="auth-overlay" class="auth-overlay">
-        <div class="auth-card">
-            <h2 id="auth-title">Login</h2>
-            <form id="auth-form" class="auth-form">
-                <input type="text" name="username" placeholder="Username or Email" required>
-                <div id="full-name-group" style="display: none;">
-                    <input type="email" name="email" placeholder="Email (for registration)">
-                    <input type="text" name="full_name" placeholder="Full Name">
-                </div>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit" id="auth-submit" class="auth-btn">Login</button>
-                <div id="auth-toggle" class="auth-toggle">Need an account? Sign Up</div>
-            </form>
-        </div>
-    </div>
+    <!-- Auth Modal removed as it is now a separate page -->
 </body>
 </html>

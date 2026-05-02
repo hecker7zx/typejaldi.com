@@ -9,8 +9,11 @@ class User(Base):
     id = Column(BigInteger, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False, index=True)
     email = Column(String, unique=True, nullable=False, index=True)
-    password_hash = Column(Text, nullable=False)
+    password_hash = Column(Text, nullable=True)  # nullable for Google OAuth users
+    google_id = Column(String(100), unique=True, nullable=True, index=True)
     full_name = Column(String(120))
+    reset_token = Column(String(100), nullable=True)
+    reset_token_expiry = Column(DateTime(timezone=True), nullable=True)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -57,6 +60,7 @@ class UserStats(Base):
     best_wpm = Column(Numeric(6, 2), default=0)
     avg_wpm = Column(Numeric(6, 2), default=0)
     avg_accuracy = Column(Numeric(5, 2), default=0)
+    total_xp = Column(BigInteger, default=0)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     user = relationship("User", back_populates="stats")

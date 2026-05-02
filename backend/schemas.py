@@ -15,10 +15,29 @@ class UserLogin(BaseModel):
     username_or_email: str
     password: str
 
+class UserStatsResponse(BaseModel):
+    total_tests: int
+    best_wpm: float
+    avg_wpm: float
+    avg_accuracy: float
+    total_xp: int
+
+    class Config:
+        from_attributes = True
+
+class ForgotPassword(BaseModel):
+    email: str
+
+class ResetPassword(BaseModel):
+    token: str
+    new_password: str
+
 class UserResponse(UserBase):
     id: int
     is_active: bool
     created_at: datetime
+    stats: Optional[UserStatsResponse] = None
+    level: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -27,6 +46,7 @@ class UserResponse(UserBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    username: Optional[str] = None
 
 class TokenData(BaseModel):
     username: Optional[str] = None
