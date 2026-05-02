@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeJaldi.com - Sketch Typing Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Permanent+Marker&family=Rock+Salt&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #fdfaf3;
+            --paper-dark: #f5f0e3;
+            --ink: #2c2416;
+            --ink-light: #5c4f3a;
+            --ink-faded: #8a7d6b;
+            --red: #d94a4a;
+            --green: #3d8b5e;
+            --blue: #4a7fb5;
+            --blue-line: #c8d6e5;
+            --red-margin: #e8b4b8;
+            --highlight: #ffeb3b;
+            --sketch-orange: #e8874b;
+            --sketch-purple: #7b5ea7;
+            --sketch-teal: #4a9c8c;
+            --font-sketch: 'Caveat', cursive;
+            --font-marker: 'Permanent Marker', cursive;
+            --font-rock: 'Rock Salt', cursive;
+            --line-height: 30px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e8e0d5;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, #f0e8d8 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, #e8dcc8 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: auto, auto, 120px 120px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sketch);
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating doodle decorations */
+        body::before {
+            content: '✏️';
+            position: fixed;
+            top: 8%;
+            left: 6%;
+            font-size: 2.5rem;
+            opacity: 0.5;
+            transform: rotate(-15deg);
+            pointer-events: none;
+            animation: floatDoodle 6s ease-in-out infinite;
+        }
+        body::after {
+            content: '📝';
+            position: fixed;
+            bottom: 10%;
+            right: 7%;
+            font-size: 3rem;
+            opacity: 0.4;
+            transform: rotate(10deg);
+            pointer-events: none;
+            animation: floatDoodle 8s ease-in-out infinite reverse;
+        }
+        @keyframes floatDoodle {
+            0%,
+            100% {
+                transform: rotate(-15deg) translateY(0);
+            }
+            25% {
+                transform: rotate(-10deg) translateY(-15px);
+            }
+            50% {
+                transform: rotate(-20deg) translateY(-8px);
+            }
+            75% {
+                transform: rotate(-12deg) translateY(-20px);
+            }
+        }
+
+        /* Doodle stars */
+        .doodle-star {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.35;
+            font-size: 1.8rem;
+            animation: twinkle 3s ease-in-out infinite;
+            z-index: 0;
+        }
+        .doodle-star:nth-child(1) {
+            top: 15%;
+            right: 12%;
+            animation-delay: 0s;
+        }
+        .doodle-star:nth-child(2) {
+            top: 25%;
+            left: 10%;
+            animation-delay: 1s;
+            font-size: 1.2rem;
+        }
+        .doodle-star:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 2s;
+            font-size: 2rem;
+        }
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.3) rotate(15deg);
+            }
+        }
+
+        /* Main notebook container */
+        .notebook {
+            background:
+                linear-gradient(to right, var(--red-margin) 38px, transparent 38px),
+                linear-gradient(to bottom, var(--blue-line) 1px, transparent 1px),
+                var(--paper);
+            background-size: 100% var(--line-height), 100% var(--line-height);
+            border-radius: 12px 18px 255px 15px / 18px 225px 15px 255px;
+            box-shadow:
+                3px 4px 8px rgba(0, 0, 0, 0.15),
+                6px 8px 20px rgba(0, 0, 0, 0.08),
+                inset 0 0 0 2px rgba(139, 119, 80, 0.3),
+                0 0 0 4px rgba(180, 160, 130, 0.4);
+            width: 100%;
+            max-width: 850px;
+            min-height: 580px;
+            padding: 30px 30px 25px 55px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            /* Spiral binding effect */
+            border-left: 3px dashed #c4b89a;
+        }
+
+        .notebook::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 30px;
+            bottom: 30px;
+            width: 16px;
+            background:
+                radial-gradient(circle, #888 30%, #666 60%, transparent 70%) repeat-y;
+            background-size: 16px 28px;
+            border-radius: 8px;
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        /* Torn edge at bottom */
+        .notebook::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 20px;
+            right: 20px;
+            height: 8px;
+            background: var(--paper);
+            border-radius: 0 0 60% 40% / 0 0 100% 80%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            z-index: 3;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 2;
+        }
+        .logo {
+            font-family: var(--font-marker);
+            font-size: 2rem;
+            color: var(--ink);
+            text-decoration: none;
+            letter-spacing: -1px;
+            transform: rotate(-1.5deg);
+            display: inline-block;
+            transition: transform 0.2s;
+            line-height: 1;
+        }
+        .logo:hover {
+            transform: rotate(1deg) scale(1.04);
+        }
+        .logo .jaldi {
+            color: var(--sketch-orange);
+            position: relative;
+        }
+        .logo .jaldi::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--sketch-orange);
+            border-radius: 2px;
+            opacity: 0.6;
+            transform: rotate(-1deg);
+        }
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--ink-faded);
+            font-style: italic;
+            transform: rotate(0.5deg);
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        .mode-btn {
+            font-family: var(--font-sketch);
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: var(--paper);
+            color: var(--ink);
+            border: 2px solid var(--ink-light);
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            transform: rotate(var(--rot, 0deg));
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+        }
+        .mode-btn:nth-child(1) {
+            --rot: -1deg;
+            border-radius: 20px 8px 18px 6px / 10px 20px 8px 16px;
+        }
+        .mode-btn:nth-child(2) {
+            --rot: 0.8deg;
+            border-radius: 8px 22px 6px 18px / 18px 10px 20px 8px;
+        }
+        .mode-btn:nth-child(3) {
+            --rot: -0.6deg;
+            border-radius: 15px 10px 20px 5px / 8px 18px 10px 22px;
+        }
+        .mode-btn:nth-child(4) {
+            --rot: 1.2deg;
+            border-radius: 10px 16px 8px 20px / 20px 8px 16px 10px;
+        }
+        .mode-btn:nth-child(5) {
+            --rot: -0.3deg;
+            border-radius: 18px 6px 15px 10px / 12px 20px 6px 18px;
+        }
+        .mode-btn:hover {
+            background: #fffdf7;
+            transform: rotate(0deg) scale(1.04);
+            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+            border-color: var(--ink);
+        }
+        .mode-btn.active {
+            background: #fffef9;
+            border-color: var(--sketch-orange);
+            color: var(--sketch-orange);
+            box-shadow: 2px 3px 0px rgba(232, 135, 75, 0.3);
+            font-weight: 700;
+        }
+        .mode-btn.active::after {
+            content: '⌒';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: var(--sketch-orange);
+            pointer-events: none;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.5);
+            padding: 5px 12px;
+            border-radius: 20px 6px 18px 8px / 8px 20px 6px 16px;
+            border: 1.5px dashed rgba(0, 0, 0, 0.2);
+            transform: rotate(var(--rot, 0deg));
+        }
+        .stat-item:nth-child(1) {
+            --rot: -0.5deg;
+        }
+        .stat-item:nth-child(2) {
+            --rot: 0.4deg;
+        }
+        .stat-item:nth-child(3) {
+            --rot: -0.3deg;
+        }
+        .stat-item:nth-child(4) {
+            --rot: 0.6deg;
+        }
+        .stat-icon {
+            font-size: 1.3rem;
+        }
+        .stat-value {
+            font-family: var(--font-marker);
+            font-size: 1.3rem;
+            color: var(--sketch-orange);
+            min-width: 38px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--ink-faded);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.15);
+            transform: rotate(3deg);
+        }
+
+        /* Word display area */
+        .word-display-wrapper {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 8px 16px 6px 14px / 14px 8px 16px 6px;
+            border: 2px dashed rgba(0, 0, 0, 0.18);
+            padding: 16px 14px;
+            margin-bottom: 12px;
+            min-height: 130px;
+            max-height: 155px;
+            overflow: hidden;
+            cursor: text;
+            transition: border-color 0.3s;
+            position: relative;
+        }
+        .word-display-wrapper.focused {
+            border-color: var(--sketch-orange);
+            border-style: solid;
+            box-shadow: 0 0 0 4px rgba(232, 135, 75, 0.1);
+        }
+        .word-display-wrapper.blurred {
+            border-style: dashed;
+            opacity: 0.85;
+        }
+        .word-display-inner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            align-items: flex-start;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1.55;
+            padding: 2px 0;
+        }
+        .word {
+            font-family: var(--font-sketch);
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: var(--ink-faded);
+            letter-spacing: 0.3px;
+            transition: all 0.15s;
+            position: relative;
+            white-space: nowrap;
+            cursor: default;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .word.current {
+            color: var(--ink);
+            font-weight: 700;
+            background: rgba(255, 235, 59, 0.25);
+            border-radius: 4px 10px 3px 8px / 6px 4px 10px 3px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+            animation: subtlePulse 2s ease-in-out infinite;
+        }
+        @keyframes subtlePulse {
+            0%,
+            100% {
+                background: rgba(255, 235, 59, 0.25);
+            }
+            50% {
+                background: rgba(255, 235, 59, 0.4);
+            }
+        }
+        .word.correct {
+            color: var(--green);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .word.incorrect {
+            color: var(--red);
+            text-decoration: line-through;
+            text-decoration-style: wavy;
+            text-decoration-color: rgba(217, 74, 74, 0.5);
+            text-underline-offset: 5px;
+        }
+        .word .letter-correct {
+            color: var(--green);
+            font-weight: 600;
+        }
+        .word .letter-incorrect {
+            color: var(--red);
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+            text-decoration-color: rgba(217, 74, 74, 0.6);
+            text-underline-offset: 3px;
+        }
+        .word .letter-untouched {
+            color: inherit;
+        }
+        /* Blinking caret */
+        .caret {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: var(--sketch-orange);
+            margin-left: 1px;
+            vertical-align: text-bottom;
+            animation: blinkCaret 0.7s step-end infinite;
+            border-radius: 1px;
+            position: relative;
+            top: 2px;
+        }
+        @keyframes blinkCaret {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+        .caret-hidden {
+            opacity: 0;
+            animation: none;
+        }
+
+        /* Click prompt */
+        .click-prompt {
+            text-align: center;
+            color: var(--ink-faded);
+            font-size: 1rem;
+            font-style: italic;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.4s;
+        }
+        .word-display-wrapper.focused .click-prompt {
+            opacity: 0;
+        }
+
+        /* XP Progress bar */
+        .xp-section {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .level-badge {
+            font-family: var(--font-marker);
+            font-size: 1rem;
+            color: var(--sketch-purple);
+            background: rgba(123, 94, 167, 0.1);
+            padding: 4px 10px;
+            border-radius: 16px 4px 14px 6px / 6px 14px 4px 16px;
+            border: 1.5px dashed rgba(123, 94, 167, 0.4);
+            white-space: nowrap;
+            transform: rotate(-1deg);
+            min-width: 90px;
+            text-align: center;
+        }
+        .xp-bar-outer {
+            flex: 1;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 20px 6px 18px 4px / 6px 18px 4px 16px;
+            border: 1.5px dashed rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        .xp-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, #e8b84b, #e8874b, #e8b84b);
+            background-size: 200% 100%;
+            animation: xpShimmer 2s linear infinite;
+            border-radius: inherit;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        @keyframes xpShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        .xp-bar-inner::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            transform: translateX(3px);
+        }
+        .xp-text {
+            font-size: 0.75rem;
+            color: var(--ink-faded);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        /* Hidden input */
+        .hidden-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 1px;
+            height: 1px;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Bottom bar */
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+            margin-top: 4px;
+        }
+        .restart-btn {
+            font-family: var(--font-sketch);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 7px 16px;
+            background: var(--paper);
+            color: var(--ink);
+            border: 2px solid var(--ink-light);
+            cursor: pointer;
+            border-radius: 16px 6px 18px 4px / 6px 16px 4px 18px;
+            transform: rotate(-0.8deg);
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+            transition: all 0.15s;
+        }
+        .restart-btn:hover {
+            transform: rotate(0deg) scale(1.04);
+            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+            border-color: var(--ink);
+        }
+        .hint-text {
+            font-size: 0.8rem;
+            color: var(--ink-faded);
+            font-style: italic;
+        }
+        .streak-indicator {
+            font-family: var(--font-marker);
+            font-size: 0.9rem;
+            color: var(--sketch-orange);
+            animation: streakPop 0.4s ease-out;
+            display: inline-block;
+        }
+        @keyframes streakPop {
+            0% {
+                transform: scale(1.6);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Results overlay */
+        .results-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .results-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .results-card {
+            background: var(--paper);
+            background-image:
+                linear-gradient(to bottom, var(--blue-line) 1px, transparent 1px);
+            background-size: 100% 28px;
+            border-radius: 20px 8px 25px 10px / 10px 22px 8px 20px;
+            border: 3px solid var(--ink-light);
+            box-shadow: 8px 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px 28px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: rotate(-0.5deg);
+        }
+        .results-card h2 {
+            font-family: var(--font-marker);
+            font-size: 2rem;
+            color: var(--ink);
+            margin-bottom: 16px;
+            transform: rotate(-1deg);
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .result-stat {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 12px 4px 14px 6px / 6px 12px 4px 14px;
+            border: 1.5px dashed rgba(0, 0, 0, 0.2);
+        }
+        .result-stat .big {
+            font-family: var(--font-marker);
+            font-size: 2rem;
+            color: var(--sketch-orange);
+            display: block;
+        }
+        .result-stat .lbl {
+            font-size: 0.8rem;
+            color: var(--ink-faded);
+        }
+        .xp-earned {
+            font-family: var(--font-marker);
+            font-size: 1.3rem;
+            color: var(--sketch-purple);
+            margin: 8px 0;
+        }
+        .level-up-badge {
+            display: inline-block;
+            font-family: var(--font-marker);
+            font-size: 1.1rem;
+            background: #ffeaa7;
+            color: #c0841c;
+            padding: 6px 16px;
+            border-radius: 20px 6px 18px 4px / 6px 18px 4px 16px;
+            border: 2px solid #f0c040;
+            animation: bounceBadge 0.6s ease-out;
+            margin: 6px 0;
+        }
+        @keyframes bounceBadge {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .results-close-btn {
+            font-family: var(--font-sketch);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 10px 24px;
+            background: var(--sketch-orange);
+            color: #fff;
+            border: 2px solid #c06a30;
+            cursor: pointer;
+            border-radius: 18px 6px 20px 5px / 8px 18px 4px 16px;
+            transform: rotate(-1deg);
+            box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.15);
+            transition: all 0.15s;
+            margin-top: 10px;
+        }
+        .results-close-btn:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Confetti doodles */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 200;
+            font-size: 2rem;
+            animation: confettiFall 1.5s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .notebook {
+                padding: 20px 18px 20px 40px;
+                margin: 0;
+                border-radius: 8px 14px 15px 8px / 12px 10px 14px 6px;
+            }
+            .notebook::before {
+                left: -5px;
+                width: 10px;
+                background-size: 10px 22px;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            .word {
+                font-size: 1.1rem;
+            }
+            .word-display-wrapper {
+                min-height: 100px;
+                max-height: 130px;
+                padding: 10px 8px;
+            }
+            .stats-bar {
+                gap: 8px;
+            }
+            .stat-item {
+                font-size: 0.9rem;
+                padding: 4px 8px;
+            }
+            .mode-btn {
+                font-size: 0.9rem;
+                padding: 6px 10px;
+            }
+            .results-card {
+                padding: 20px 16px;
+            }
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .result-stat .big {
+                font-size: 1.5rem;
+            }
+        }
+        @media (max-width: 400px) {
+            .notebook {
+                padding: 14px 10px 14px 30px;
+                background-size: 100% var(--line-height), 100% var(--line-height);
+            }
+            .word {
+                font-size: 0.95rem;
+            }
+            .word-display-wrapper {
+                min-height: 85px;
+                max-height: 110px;
+            }
+            .mode-btn {
+                font-size: 0.78rem;
+                padding: 5px 8px;
+            }
+            .logo {
+                font-size: 1.3rem;
+            }
+            .stat-value {
+                font-size: 1rem;
+            }
+        }
+
+        /* Auth Modal */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-card {
+            background: var(--paper);
+            border: 2px solid var(--ink);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px 5px 20px 8px / 8px 18px 6px 22px;
+            box-shadow: 10px 10px 0px var(--ink-light);
+            position: relative;
+            transform: rotate(-1deg);
+        }
+        .auth-card h2 {
+            font-family: var(--font-marker);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .auth-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            font-family: var(--font-sketch);
+            font-size: 1.1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--blue-line);
+            outline: none;
+        }
+        .auth-form input:focus {
+            border-bottom-color: var(--sketch-orange);
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--sketch-orange);
+            color: white;
+            border: none;
+            font-family: var(--font-marker);
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .auth-toggle {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating doodle stars -->
+    <span class="doodle-star" style="top:15%;right:12%;">⭐</span>
+    <span class="doodle-star" style="top:25%;left:10%;">✨</span>
+    <span class="doodle-star" style="bottom:20%;left:15%;">💫</span>
+    <span class="doodle-star" style="top:40%;right:8%;font-size:1rem;">🌟</span>
+
+    <!-- Notebook -->
+    <div class="notebook" id="notebook">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <a href="#" class="logo" onclick="restartTest();return false;">
+                    Type<span class="jaldi">Jaldi</span>.com
+                </a>
+                <span class="tagline">~ sketch edition ✍️</span>
+            </div>
+            <div id="user-section">
+                <button id="login-btn" class="mode-btn">Login / Sign Up</button>
+                <div id="user-info" style="display: none; align-items: center; gap: 10px;">
+                    <span id="username-display" style="font-weight: bold; color: var(--sketch-purple);"></span>
+                    <button id="logout-btn" class="mode-btn" style="padding: 4px 8px; font-size: 0.8rem;">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode selector -->
+        <div class="mode-selector" id="modeSelector">
+            <button class="mode-btn" data-time="15">⏱ 15s</button>
+            <button class="mode-btn active" data-time="30">⏱ 30s</button>
+            <button class="mode-btn" data-time="60">⏱ 60s</button>
+            <button class="mode-btn" data-time="120">⏱ 120s</button>
+            <button class="mode-btn" data-time="0">♾️ Free</button>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-icon">⚡</span>
+                <span class="stat-value" id="wpmDisplay">0</span>
+                <span class="stat-label">WPM</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-icon">🎯</span>
+                <span class="stat-value" id="accDisplay">100</span>
+                <span class="stat-label">%</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-icon">⏱️</span>
+                <span class="stat-value" id="timerDisplay">30</span>
+                <span class="stat-label">s</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-icon">🔥</span>
+                <span class="stat-value" id="streakDisplay">0</span>
+                <span class="stat-label">streak</span>
+            </div>
+        </div>
+
+        <!-- Word display -->
+        <div class="word-display-wrapper blurred" id="wordDisplayWrapper">
+            <div class="click-prompt" id="clickPrompt">👆 Click here & start typing...</div>
+            <div class="word-display-inner" id="wordDisplayInner">
+                <!-- Words rendered by JS -->
+            </div>
+        </div>
+
+        <!-- XP section -->
+        <div class="xp-section">
+            <div class="level-badge" id="levelBadge">📊 Lv.1 Doodle</div>
+            <div class="xp-bar-outer">
+                <div class="xp-bar-inner" id="xpBarInner" style="width: 0%;"></div>
+            </div>
+            <span class="xp-text" id="xpText">0 / 100 XP</span>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="bottom-bar">
+            <button class="restart-btn" onclick="restartTest()" title="Restart (Tab)">🔄 Redraw</button>
+            <span class="hint-text">press <strong>Tab</strong> to restart &nbsp;|&nbsp; <span id="streakIndicator"></span></span>
+        </div>
+
+        <!-- Hidden input -->
+        <input type="text" class="hidden-input" id="hiddenInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+
+    <!-- Results overlay -->
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-card">
+            <h2>📋 Test Complete!</h2>
+            <div class="results-grid">
+                <div class="result-stat"><span class="big" id="resultWPM">0</span><span class="lbl">WPM</span></div>
+                <div class="result-stat"><span class="big" id="resultAcc">100%</span><span class="lbl">Accuracy</span></div>
+                <div class="result-stat"><span class="big" id="resultChars">0</span><span class="lbl">Chars Typed</span></div>
+                <div class="result-stat"><span class="big" id="resultStreak">0</span><span class="lbl">Best Streak</span></div>
+            </div>
+            <div class="xp-earned" id="xpEarnedDisplay">+0 XP</div>
+            <div id="levelUpContainer"></div>
+            <button class="results-close-btn" onclick="closeResults()">✍️ Type Again!</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ──────────────────────────────────────
+            // DOM ELEMENTS
+            // ──────────────────────────────────────
+            const wordDisplayWrapper = document.getElementById('wordDisplayWrapper');
+            const wordDisplayInner = document.getElementById('wordDisplayInner');
+            const clickPrompt = document.getElementById('clickPrompt');
+            const hiddenInput = document.getElementById('hiddenInput');
+            const wpmDisplay = document.getElementById('wpmDisplay');
+            const accDisplay = document.getElementById('accDisplay');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const streakDisplay = document.getElementById('streakDisplay');
+            const streakIndicator = document.getElementById('streakIndicator');
+            const levelBadge = document.getElementById('levelBadge');
+            const xpBarInner = document.getElementById('xpBarInner');
+            const xpText = document.getElementById('xpText');
+            const resultsOverlay = document.getElementById('resultsOverlay');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            const notebook = document.getElementById('notebook');
+
+            // Result elements
+            const resultWPM = document.getElementById('resultWPM');
+            const resultAcc = document.getElementById('resultAcc');
+            const resultChars = document.getElementById('resultChars');
+            const resultStreak = document.getElementById('resultStreak');
+            const xpEarnedDisplay = document.getElementById('xpEarnedDisplay');
+            const levelUpContainer = document.getElementById('levelUpContainer');
+
+            // ──────────────────────────────────────
+            // WORD LISTS
+            // ──────────────────────────────────────
+            const commonWords = [
+                'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'it', 'for', 'not', 'on', 'with',
+                'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her',
+                'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up',
+                'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time',
+                'no', 'just', 'him', 'know', 'take', 'people', 'into', 'year', 'your', 'good', 'some', 'could',
+                'them', 'see', 'other', 'than', 'then', 'now', 'look', 'only', 'come', 'its', 'over', 'think',
+                'also', 'back', 'after', 'use', 'two', 'how', 'our', 'work', 'first', 'well', 'way', 'even',
+                'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us', 'great', 'been', 'still',
+                'place', 'where', 'part', 'every', 'such', 'much', 'again', 'own', 'found', 'those', 'never',
+                'under', 'last', 'while', 'house', 'world', 'life', 'hand', 'here', 'thought', 'long', 'little',
+                'man', 'both', 'home', 'write', 'read', 'book', 'love', 'bird', 'tree', 'moon', 'star', 'water',
+            ];
+
+            const mediumWords = [
+                'about', 'above', 'across', 'action', 'active', 'actually', 'almost', 'always', 'amount', 'animal',
+                'answer', 'appear', 'around', 'arrive', 'artist', 'become', 'before', 'behind', 'believe', 'better',
+                'beyond', 'bright', 'bring', 'broken', 'brother', 'brought', 'build', 'camera', 'cannot', 'carry',
+                'center', 'change', 'circle', 'common', 'complete', 'consider', 'contain', 'corner', 'country',
+                'create', 'darkness', 'decide', 'define', 'deliver', 'destroy', 'develop', 'dinner', 'discover',
+                'display', 'distant', 'double', 'dragon', 'during', 'easily', 'effect', 'either', 'emerge',
+                'enable', 'ending', 'energy', 'engine', 'enough', 'entire', 'escape', 'exactly', 'except',
+                'excite', 'expect', 'explain', 'extreme', 'family', 'famous', 'father', 'fellow', 'figure',
+                'finally', 'finger', 'finish', 'flower', 'follow', 'forest', 'forget', 'former', 'friend',
+                'future', 'garden', 'gather', 'gentle', 'golden', 'ground', 'growth', 'happen', 'having',
+            ];
+
+            const hardWords = [
+                'aberration', 'absolutely', 'accomplish', 'acquaintance', 'aesthetic', 'ambiguous', 'amplitude',
+                'antagonist', 'archetype', 'benevolent', 'camaraderie', 'capitulate', 'catastrophe', 'chronological',
+                'clandestine', 'collaborate', 'commemorate', 'compendium', 'consequential', 'constellation',
+                'contemporary', 'conundrum', 'debilitate', 'demographic', 'deteriorate', 'dichotomy', 'disillusion',
+                'disseminate', 'ebullient', 'efficacious', 'egalitarian', 'embellish', 'ephemeral', 'equilibrium',
+                'erroneous', 'exacerbate', 'facetious', 'fallacious', 'flamboyant', 'gregarious', 'harbinger',
+                'idiosyncrasy', 'incandescent', 'juxtaposition', 'kaleidoscope', 'labyrinthine', 'magnanimous',
+                'metamorphosis', 'nomenclature', 'obfuscate', 'perpendicular', 'phenomenon', 'quintessential',
+                'reminiscent', 'serendipity', 'surreptitious', 'transcendent', 'ubiquitous', 'unprecedented',
+                'verisimilitude', 'whimsical', 'zephyr',
+            ];
+
+            let currentWordSet = 'common';
+            let allWords = [...commonWords];
+
+            function shuffleAndGetWords(count) {
+                const pool = [...allWords];
+                // Fisher-Yates shuffle
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                // Ensure we have enough words, repeat if needed
+                while (pool.length < count) {
+                    const extra = [...allWords];
+                    for (let i = extra.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [extra[i], extra[j]] = [extra[j], extra[i]];
+                    }
+                    pool.push(...extra);
+                }
+                return pool.slice(0, count);
+            }
+
+            // ──────────────────────────────────────
+            // STATE
+            // ──────────────────────────────────────
+            const TOTAL_WORDS_TO_GENERATE = 200;
+            let words = [];
+            let currentWordIndex = 0;
+            let currentInput = '';
+            let correctKeystrokes = 0;
+            let totalKeystrokes = 0;
+            let correctWordsCount = 0;
+            let incorrectWordsCount = 0;
+            let currentStreak = 0;
+            let bestStreak = 0;
+            let testActive = false;
+            let testFinished = false;
+            let timerSeconds = 30;
+            let activeMode = 'time';
+            let timeRemaining = 30;
+            let timerInterval = null;
+            let testStartTime = null;
+            let isFocused = false;
+
+            // ──────────────────────────────────────
+            // LEVEL SYSTEM (persisted)
+            // ──────────────────────────────────────
+            const LEVEL_THRESHOLDS = [
+                { level: 1, xp: 0, title: 'Doodle Beginner', emoji: '🌱' },
+                { level: 2, xp: 100, title: 'Sketch Apprentice', emoji: '✏️' },
+                { level: 3, xp: 300, title: 'Ink Scratcher', emoji: '🖋️' },
+                { level: 4, xp: 600, title: 'Pencil Master', emoji: '✒️' },
+                { level: 5, xp: 1000, title: 'Pen Artist', emoji: '🎨' },
+                { level: 6, xp: 1500, title: 'Calligraphy Pro', emoji: '📜' },
+                { level: 7, xp: 2200, title: 'Type Wizard', emoji: '🧙' },
+                { level: 8, xp: 3000, title: 'Keyboard Sage', emoji: '⌨️' },
+                { level: 9, xp: 4000, title: 'Speed Demon', emoji: '⚡' },
+                { level: 10, xp: 5500, title: 'TypeJaldi Legend', emoji: '👑' },
+            ];
+
+            function getLevelData(totalXP) {
+                let currentLevelData = LEVEL_THRESHOLDS[0];
+                let nextLevelData = LEVEL_THRESHOLDS[1] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+                for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+                    if (totalXP >= LEVEL_THRESHOLDS[i].xp) {
+                        currentLevelData = LEVEL_THRESHOLDS[i];
+                        nextLevelData = LEVEL_THRESHOLDS[i + 1] || LEVEL_THRESHOLDS[i];
+                        break;
+                    }
+                }
+                const xpInLevel = totalXP - currentLevelData.xp;
+                const xpNeeded = nextLevelData.xp - currentLevelData.xp;
+                const progress = xpNeeded > 0 ? Math.min(100, (xpInLevel / xpNeeded) * 100) : 100;
+                return {
+                    level: currentLevelData.level,
+                    title: currentLevelData.title,
+                    emoji: currentLevelData.emoji,
+                    xpInLevel,
+                    xpNeeded,
+                    progress,
+                    totalXP,
+                    nextLevel: nextLevelData.level,
+                    nextTitle: nextLevelData.title,
+                };
+            }
+
+            function loadProgress() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('typejaldi_progress'));
+                    if (saved && typeof saved.totalXP === 'number' && typeof saved.bestWPM === 'number') {
+                        return {
+                            totalXP: saved.totalXP,
+                            bestWPM: saved.bestWPM,
+                            testsCompleted: saved.testsCompleted || 0,
+                        };
+                    }
+                } catch (e) { /* ignore */ }
+                return { totalXP: 0, bestWPM: 0, testsCompleted: 0 };
+            }
+
+            function saveProgress(totalXP, bestWPM, testsCompleted) {
+                try {
+                    localStorage.setItem('typejaldi_progress', JSON.stringify({
+                        totalXP,
+                        bestWPM,
+                        testsCompleted,
+                    }));
+                } catch (e) { /* ignore */ }
+            }
+
+            let userProgress = loadProgress();
+
+            function updateLevelUI() {
+                const ld = getLevelData(userProgress.totalXP);
+                levelBadge.textContent = `${ld.emoji} Lv.${ld.level} ${ld.title}`;
+                xpBarInner.style.width = ld.progress + '%';
+                xpText.textContent = `${ld.xpInLevel} / ${ld.xpNeeded} XP`;
+            }
+
+            function awardXP(wpm, accuracy, timeTaken, streak) {
+                if (timeTaken < 5 && wpm < 10) return 0; // too short/slow, no XP
+                const timeMultiplier = Math.max(0.2, Math.min(2, timeTaken / 60));
+                const accuracyFactor = accuracy / 100;
+                let baseXP = wpm * accuracyFactor * timeMultiplier;
+                const streakBonus = Math.floor(streak / 5) * 0.05;
+                const finalXP = Math.max(3, Math.floor(baseXP * (1 + streakBonus)));
+                return Math.min(finalXP, 500); // cap per test
+            }
+
+            // ──────────────────────────────────────
+            // INITIALIZATION
+            // ──────────────────────────────────────
+            function generateWords() {
+                words = shuffleAndGetWords(TOTAL_WORDS_TO_GENERATE);
+            }
+
+            function renderAllWords() {
+                wordDisplayInner.innerHTML = '';
+                words.forEach((word, index) => {
+                    const span = document.createElement('span');
+                    span.className = 'word';
+                    span.dataset.index = index;
+                    if (index === currentWordIndex) {
+                        span.classList.add('current');
+                        updateCurrentWordHTML(span, word, currentInput);
+                    } else if (index < currentWordIndex) {
+                        // Check if this word was completed correctly
+                        // We track this via a separate array
+                        span.classList.add('completed');
+                        span.textContent = word;
+                    } else {
+                        span.textContent = word;
+                    }
+                    wordDisplayInner.appendChild(span);
+                });
+                // Add completed markers
+                updateCompletedWordStyles();
+                scrollToCurrentWord();
+            }
+
+            function updateCurrentWordHTML(wordSpan, word, input) {
+                let html = '';
+                const maxLen = Math.max(word.length, input.length);
+                for (let i = 0; i < maxLen; i++) {
+                    const wordChar = word[i] || '';
+                    const inputChar = input[i] || '';
+                    if (i < input.length) {
+                        if (inputChar === wordChar) {
+                            html += `<span class="letter-correct">${wordChar || ''}</span>`;
+                        } else {
+                            html +=
+                                `<span class="letter-incorrect">${wordChar || inputChar}</span>`;
+                        }
+                    } else if (i === input.length && wordChar && isFocused && testActive && !testFinished) {
+                        html += `<span class="letter-untouched">${wordChar}</span><span class="caret"></span>`;
+                    } else if (i === input.length && wordChar && isFocused && !testActive && !testFinished) {
+                        html +=
+                            `<span class="letter-untouched">${wordChar}</span><span class="caret caret-hidden"></span>`;
+                    } else if (i === input.length && wordChar && !isFocused) {
+                        html +=
+                            `<span class="letter-untouched">${wordChar}</span><span class="caret caret-hidden"></span>`;
+                    } else {
+                        html += `<span class="letter-untouched">${wordChar}</span>`;
+                    }
+                }
+                // Show caret at end if input is complete but word not yet submitted
+                if (input.length >= word.length && isFocused && testActive && !testFinished && input.length > 0) {
+                    html += '<span class="caret"></span>';
+                }
+                if (input.length >= word.length && !isFocused && !testFinished) {
+                    html += '<span class="caret caret-hidden"></span>';
+                }
+                wordSpan.innerHTML = html;
+            }
+
+            function updateCompletedWordStyles() {
+                const allWordSpans = wordDisplayInner.querySelectorAll('.word');
+                allWordSpans.forEach(span => {
+                    const index = parseInt(span.dataset.index);
+                    if (index < currentWordIndex && !span.classList.contains('current')) {
+                        // We need to know if the word was correct or incorrect
+                        // We'll store this info in a data attribute on the span or track separately
+                        if (span.dataset.wasCorrect === 'true') {
+                            span.classList.add('correct');
+                            span.classList.remove('incorrect');
+                        } else if (span.dataset.wasCorrect === 'false') {
+                            span.classList.add('incorrect');
+                            span.classList.remove('correct');
+                        }
+                    }
+                });
+            }
+
+            function scrollToCurrentWord() {
+                const currentSpan = wordDisplayInner.querySelector('.word.current');
+                if (!currentSpan) return;
+                const wrapperHeight = wordDisplayWrapper.clientHeight;
+                const spanTop = currentSpan.offsetTop;
+                const spanHeight = currentSpan.offsetHeight;
+                const innerHeight = wordDisplayInner.scrollHeight;
+                const targetScroll = spanTop - wrapperHeight * 0.35;
+                const maxScroll = Math.max(0, innerHeight - wrapperHeight);
+                const clampedScroll = Math.max(0, Math.min(maxScroll, targetScroll));
+                wordDisplayInner.style.transform = `translateY(-${clampedScroll}px)`;
+            }
+
+            function refreshCurrentWordDisplay() {
+                const currentSpan = wordDisplayInner.querySelector('.word.current');
+                if (currentSpan) {
+                    const word = words[currentWordIndex] || '';
+                    updateCurrentWordHTML(currentSpan, word, currentInput);
+                }
+            }
+
+            function refreshAllDisplay() {
+                const allSpans = wordDisplayInner.querySelectorAll('.word');
+                allSpans.forEach(span => {
+                    const index = parseInt(span.dataset.index);
+                    if (index === currentWordIndex) {
+                        span.classList.add('current');
+                        updateCurrentWordHTML(span, words[index] || '', currentInput);
+                    } else {
+                        span.classList.remove('current');
+                        // Remove caret remnants
+                        const carets = span.querySelectorAll('.caret');
+                        carets.forEach(c => c.remove());
+                        // Restore plain text for non-current words
+                        if (index < currentWordIndex) {
+                            span.textContent = words[index] || '';
+                        } else {
+                            span.textContent = words[index] || '';
+                        }
+                    }
+                });
+                updateCompletedWordStyles();
+                scrollToCurrentWord();
+            }
+
+            function ensureEnoughWords() {
+                if (currentWordIndex >= words.length - 40) {
+                    const newWords = shuffleAndGetWords(100);
+                    words.push(...newWords);
+                    // Append new word spans
+                    newWords.forEach((word, i) => {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.dataset.index = words.length - newWords.length + i;
+                        span.textContent = word;
+                        wordDisplayInner.appendChild(span);
+                    });
+                }
+            }
+
+            // ──────────────────────────────────────
+            // STATS UPDATE
+            // ──────────────────────────────────────
+            function updateLiveStats() {
+                if (!testStartTime) {
+                    wpmDisplay.textContent = '0';
+                    accDisplay.textContent = '100';
+                    return;
+                }
+                const elapsedMinutes = (Date.now() - testStartTime) / 60000;
+                const netWPM = elapsedMinutes > 0.01 ? Math.round((correctKeystrokes / 5) / elapsedMinutes) : 0;
+                const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 100;
+
+                wpmDisplay.textContent = Math.max(0, netWPM);
+                accDisplay.textContent = accuracy;
+                streakDisplay.textContent = currentStreak;
+            }
+
+            function updateTimerDisplay() {
+                timerDisplay.textContent = timeRemaining;
+            }
+
+            function updateStreakUI() {
+                if (currentStreak >= 5) {
+                    streakIndicator.innerHTML =
+                        `<span class="streak-indicator">🔥 ${currentStreak} word streak!</span>`;
+                } else if (currentStreak > 0 && currentStreak < 5) {
+                    streakIndicator.innerHTML = '';
+                } else {
+                    streakIndicator.innerHTML = '';
+                }
+            }
+
+            // ──────────────────────────────────────
+            // TIMER
+            // ──────────────────────────────────────
+            function startTimer() {
+                if (timerSeconds === 0) {
+                    // Free mode - count up
+                    timeRemaining = 0;
+                    updateTimerDisplay();
+                    timerInterval = setInterval(() => {
+                        timeRemaining++;
+                        updateTimerDisplay();
+                        updateLiveStats();
+                    }, 1000);
+                } else {
+                    timeRemaining = timerSeconds;
+                    updateTimerDisplay();
+                    timerInterval = setInterval(() => {
+                        timeRemaining--;
+                        updateTimerDisplay();
+                        updateLiveStats();
+                        if (timeRemaining <= 0) {
+                            endTest();
+                        }
+                    }, 1000);
+                }
+            }
+
+            function stopTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }
+
+            // ──────────────────────────────────────
+            // TEST FLOW
+            // ──────────────────────────────────────
+            function startTest() {
+                if (testActive) return;
+                if (testFinished) return;
+                testActive = true;
+                testStartTime = Date.now();
+                startTimer();
+                wordDisplayWrapper.classList.add('focused');
+                wordDisplayWrapper.classList.remove('blurred');
+                clickPrompt.style.opacity = '0';
+                refreshCurrentWordDisplay();
+                updateLiveStats();
+            }
+
+            function endTest() {
+                if (!testActive || testFinished) return;
+                testActive = false;
+                testFinished = true;
+                stopTimer();
+                wordDisplayWrapper.classList.remove('focused');
+                wordDisplayWrapper.classList.add('blurred');
+                hiddenInput.value = '';
+                currentInput = '';
+
+                const elapsedMinutes = testStartTime ? (Date.now() - testStartTime) / 60000 : 1;
+                const actualTime = timerSeconds === 0 ? timeRemaining : timerSeconds;
+                const effectiveTime = Math.max(elapsedMinutes, actualTime / 60, 0.016);
+                const netWPM = Math.round((correctKeystrokes / 5) / effectiveTime);
+                const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 100;
+
+                // Award XP
+                const xpEarned = awardXP(netWPM, accuracy, effectiveTime * 60, bestStreak);
+                const oldLevel = getLevelData(userProgress.totalXP).level;
+                userProgress.totalXP += xpEarned;
+                userProgress.testsCompleted += 1;
+                if (netWPM > userProgress.bestWPM) {
+                    userProgress.bestWPM = netWPM;
+                }
+                saveProgress(userProgress.totalXP, userProgress.bestWPM, userProgress.testsCompleted);
+
+                const newLevel = getLevelData(userProgress.totalXP).level;
+                const didLevelUp = newLevel > oldLevel;
+
+                // Show results
+                showResults(netWPM, accuracy, correctKeystrokes, bestStreak, xpEarned, didLevelUp);
+                updateLevelUI();
+                refreshAllDisplay();
+                // Remove caret from current word
+                const currentSpan = wordDisplayInner.querySelector('.word.current');
+                if (currentSpan) {
+                    const carets = currentSpan.querySelectorAll('.caret');
+                    carets.forEach(c => c.remove());
+                }
+            }
+
+            function restartTest() {
+                stopTimer();
+                testActive = false;
+                testFinished = false;
+                currentWordIndex = 0;
+                currentInput = '';
+                correctKeystrokes = 0;
+                totalKeystrokes = 0;
+                correctWordsCount = 0;
+                incorrectWordsCount = 0;
+                currentStreak = 0;
+                bestStreak = 0;
+                testStartTime = null;
+                timeRemaining = timerSeconds;
+                hiddenInput.value = '';
+                wpmDisplay.textContent = '0';
+                accDisplay.textContent = '100';
+                streakDisplay.textContent = '0';
+                streakIndicator.innerHTML = '';
+                updateTimerDisplay();
+                generateWords();
+                renderAllWords();
+                updateLevelUI();
+                wordDisplayWrapper.classList.remove('focused');
+                wordDisplayWrapper.classList.add('blurred');
+                clickPrompt.style.opacity = '1';
+                resultsOverlay.classList.remove('visible');
+                levelUpContainer.innerHTML = '';
+                // Refocus
+                setTimeout(() => {
+                    hiddenInput.focus();
+                    if (document.activeElement === hiddenInput) {
+                        isFocused = true;
+                        wordDisplayWrapper.classList.add('focused');
+                        wordDisplayWrapper.classList.remove('blurred');
+                        clickPrompt.style.opacity = '0';
+                        refreshCurrentWordDisplay();
+                    }
+                }, 100);
+            }
+
+            async function showResults(wpm, accuracy, chars, streak, xpEarned, didLevelUp) {
+                resultWPM.textContent = wpm;
+                resultAcc.textContent = accuracy + '%';
+                resultChars.textContent = chars;
+                resultStreak.textContent = streak;
+                xpEarnedDisplay.textContent = `+${xpEarned} XP earned!`;
+                
+                // Send results to backend if logged in
+                const token = localStorage.getItem('access_token');
+                if (token) {
+                    try {
+                        const response = await fetch('/test-results', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                wpm: parseFloat(wpm),
+                                raw_wpm: parseFloat(wpm), // Simplifying for now
+                                accuracy: parseFloat(accuracy),
+                                mode: activeMode, // Need to track this
+                                duration: timerSeconds
+                            })
+                        });
+                        if (response.ok) {
+                            console.log('Result saved to backend!');
+                        }
+                    } catch (err) {
+                        console.error('Failed to save result:', err);
+                    }
+                }
+
+                if (didLevelUp) {
+                    const ld = getLevelData(userProgress.totalXP);
+                    levelUpContainer.innerHTML =
+                        `<div class="level-up-badge">🎉 Level Up! ${ld.emoji} Lv.${ld.level} ${ld.title}!</div>`;
+                    spawnConfetti();
+                } else {
+                    levelUpContainer.innerHTML = '';
+                }
+                resultsOverlay.classList.add('visible');
+            }
+
+            function closeResults() {
+                resultsOverlay.classList.remove('visible');
+                levelUpContainer.innerHTML = '';
+                restartTest();
+            }
+
+            function spawnConfetti() {
+                const emojis = ['🎉', '✨', '🌟', '💫', '⭐', '🎊', '✏️', '🖌️', '📝', '🔥'];
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('span');
+                        confetti.className = 'confetti';
+                        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        confetti.style.left = Math.random() * 90 + '%';
+                        confetti.style.top = -(Math.random() * 100 + 20) + 'px';
+                        confetti.style.animationDuration = (1.2 + Math.random() * 2) + 's';
+                        confetti.style.fontSize = (1.5 + Math.random() * 2.5) + 'rem';
+                        document.body.appendChild(confetti);
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 30);
+                }
+            }
+
+            // ──────────────────────────────────────
+            // INPUT HANDLING
+            // ──────────────────────────────────────
+            hiddenInput.addEventListener('input', (e) => {
+                if (testFinished) return;
+                const value = hiddenInput.value;
+                // Detect if space was pressed (word submission)
+                if (value.includes(' ')) {
+                    // Submit current word
+                    const submittedWord = value.trim();
+                    const targetWord = words[currentWordIndex] || '';
+                    const isCorrect = submittedWord === targetWord;
+
+                    // Count keystrokes for this word
+                    const charsTyped = submittedWord.length;
+                    totalKeystrokes += charsTyped;
+                    // Plus one for the space
+                    totalKeystrokes += 1;
+
+                    // Check each character
+                    for (let i = 0; i < Math.max(submittedWord.length, targetWord.length); i++) {
+                        if (i < submittedWord.length && i < targetWord.length && submittedWord[i] ===
+                            targetWord[i]) {
+                            correctKeystrokes++;
+                        }
+                    }
+                    // If exact match, all chars were correct
+                    if (isCorrect && submittedWord.length === targetWord.length) {
+                        correctKeystrokes = correctKeystrokes - Math.min(submittedWord.length, targetWord
+                            .length) + targetWord.length;
+                        // Recalculate: for exact correct word, all target chars are correct keystrokes
+                        correctKeystrokes = correctKeystrokes - (submittedWord.length - targetWord.length);
+                        // Actually, simpler: add correct chars for the word
+                    }
+
+                    // Simpler approach: recalculate correctKeystrokes properly
+                    // Let me redo this more carefully
+                    let newCorrect = 0;
+                    const compareLen = Math.max(submittedWord.length, targetWord.length);
+                    for (let i = 0; i < compareLen; i++) {
+                        const sChar = submittedWord[i] || '';
+                        const tChar = targetWord[i] || '';
+                        if (sChar === tChar && sChar !== '') {
+                            newCorrect++;
+                        }
+                    }
+                    // We already counted some correctKeystrokes incrementally
+                    // Reset and use the per-word comparison
+                    // Actually, the incremental counting below in keydown is more accurate
+                    // Let me just handle word completion here
+
+                    // Mark word as correct or incorrect
+                    const wordSpan = wordDisplayInner.querySelector(`.word[data-index="${currentWordIndex}"]`);
+                    if (wordSpan) {
+                        wordSpan.dataset.wasCorrect = isCorrect ? 'true' : 'false';
+                        wordSpan.classList.remove('current');
+                        if (isCorrect) {
+                            wordSpan.classList.add('correct');
+                            correctWordsCount++;
+                            currentStreak++;
+                            if (currentStreak > bestStreak) bestStreak = currentStreak;
+                        } else {
+                            wordSpan.classList.add('incorrect');
+                            incorrectWordsCount++;
+                            currentStreak = 0;
+                        }
+                        wordSpan.textContent = targetWord;
+                    }
+
+                    // Move to next word
+                    currentWordIndex++;
+                    currentInput = '';
+                    hiddenInput.value = '';
+                    ensureEnoughWords();
+
+                    // Update the new current word
+                    const newCurrentSpan = wordDisplayInner.querySelector(
+                        `.word[data-index="${currentWordIndex}"]`);
+                    if (newCurrentSpan) {
+                        newCurrentSpan.classList.add('current');
+                        updateCurrentWordHTML(newCurrentSpan, words[currentWordIndex] || '', '');
+                    }
+
+                    updateLiveStats();
+                    updateStreakUI();
+                    scrollToCurrentWord();
+                    updateCompletedWordStyles();
+                    return;
+                }
+
+                // Regular typing (no space)
+                currentInput = value;
+                if (!testActive && value.length > 0) {
+                    startTest();
+                }
+                refreshCurrentWordDisplay();
+                updateLiveStats();
+                scrollToCurrentWord();
+            });
+
+            hiddenInput.addEventListener('keydown', (e) => {
+                if (testFinished) {
+                    e.preventDefault();
+                    return;
+                }
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    restartTest();
+                    return;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    restartTest();
+                    return;
+                }
+                if (e.key === 'Backspace') {
+                    // Handled naturally by input event
+                    return;
+                }
+                if (e.key === ' ') {
+                    // Space is handled in input event
+                    return;
+                }
+                if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    // Character key pressed
+                    totalKeystrokes++;
+                    const targetWord = words[currentWordIndex] || '';
+                    const charIndex = currentInput.length; // before the new char is added
+                    const typedChar = e.key;
+                    if (charIndex < targetWord.length && typedChar === targetWord[charIndex]) {
+                        correctKeystrokes++;
+                    }
+                    if (!testActive) {
+                        startTest();
+                    }
+                    updateLiveStats();
+                }
+            });
+
+            // ──────────────────────────────────────
+            // FOCUS MANAGEMENT
+            // ──────────────────────────────────────
+            function focusInput() {
+                hiddenInput.focus();
+                isFocused = true;
+                wordDisplayWrapper.classList.add('focused');
+                wordDisplayWrapper.classList.remove('blurred');
+                clickPrompt.style.opacity = '0';
+                refreshCurrentWordDisplay();
+                scrollToCurrentWord();
+            }
+
+            wordDisplayWrapper.addEventListener('click', (e) => {
+                if (testFinished) return;
+                focusInput();
+            });
+
+            notebook.addEventListener('click', (e) => {
+                if (testFinished) return;
+                if (!wordDisplayWrapper.contains(e.target) && !e.target.closest('button') && !e.target
+                    .closest('.mode-btn') && !e.target.closest('.results-card')) {
+                    focusInput();
+                }
+            });
+
+            hiddenInput.addEventListener('focus', () => {
+                isFocused = true;
+                wordDisplayWrapper.classList.add('focused');
+                wordDisplayWrapper.classList.remove('blurred');
+                clickPrompt.style.opacity = '0';
+                refreshCurrentWordDisplay();
+            });
+
+            hiddenInput.addEventListener('blur', () => {
+                isFocused = false;
+                if (!testFinished) {
+                    wordDisplayWrapper.classList.remove('focused');
+                    wordDisplayWrapper.classList.add('blurred');
+                    if (!testActive) {
+                        clickPrompt.style.opacity = '1';
+                    }
+                }
+                refreshCurrentWordDisplay();
+            });
+
+            // ──────────────────────────────────────
+            // MODE BUTTONS
+            // ──────────────────────────────────────
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (testActive && !testFinished) {
+                        // Restart if mode changes during test
+                    }
+                    modeBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    timerSeconds = parseInt(btn.dataset.time);
+                    activeMode = btn.textContent.toLowerCase().trim(); // Update activeMode
+                    timeRemaining = timerSeconds;
+                    updateTimerDisplay();
+                    restartTest();
+                });
+            });
+
+            // ──────────────────────────────────────
+            // KEYBOARD SHORTCUTS
+            // ──────────────────────────────────────
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && !e.target.closest('input') && !e.target.closest('button')) {
+                    e.preventDefault();
+                    restartTest();
+                    return;
+                }
+                // Ctrl+number to switch modes
+                if (e.ctrlKey && e.key >= '1' && e.key <= '5') {
+                    e.preventDefault();
+                    const index = parseInt(e.key) - 1;
+                    if (modeBtns[index]) {
+                        modeBtns[index].click();
+                    }
+                }
+            });
+
+            // Close results on overlay click
+            resultsOverlay.addEventListener('click', (e) => {
+                if (e.target === resultsOverlay) {
+                    closeResults();
+                }
+            });
+
+            // ──────────────────────────────────────
+            // INITIAL RENDER
+            // ──────────────────────────────────────
+            function init() {
+                generateWords();
+                renderAllWords();
+                updateLevelUI();
+                updateTimerDisplay();
+                // Auto-focus
+                setTimeout(() => {
+                    hiddenInput.focus();
+                    if (document.activeElement === hiddenInput) {
+                        isFocused = true;
+                        wordDisplayWrapper.classList.add('focused');
+                        wordDisplayWrapper.classList.remove('blurred');
+                        clickPrompt.style.opacity = '0';
+                        refreshCurrentWordDisplay();
+                    }
+                }, 300);
+            }
+
+            init();
+
+            // ──────────────────────────────────────
+            // PERIODIC STATS UPDATE
+            // ──────────────────────────────────────
+            setInterval(() => {
+                if (testActive && !testFinished) {
+                    updateLiveStats();
+                    scrollToCurrentWord();
+                }
+            }, 250);
+
+            // ──────────────────────────────────────
+            // AUTHENTICATION LOGIC
+            // ──────────────────────────────────────
+            const authOverlay = document.getElementById('auth-overlay');
+            const authForm = document.getElementById('auth-form');
+            const authTitle = document.getElementById('auth-title');
+            const authBtn = document.getElementById('auth-submit');
+            const authToggle = document.getElementById('auth-toggle');
+            const loginBtn = document.getElementById('login-btn');
+            const userInfo = document.getElementById('user-info');
+            const usernameDisplay = document.getElementById('username-display');
+            const logoutBtn = document.getElementById('logout-btn');
+            const fullNameGroup = document.getElementById('full-name-group');
+
+            let isLoginMode = true;
+
+            function updateAuthUI() {
+                const token = localStorage.getItem('access_token');
+                const username = localStorage.getItem('username');
+                if (token && username) {
+                    loginBtn.style.display = 'none';
+                    userInfo.style.display = 'flex';
+                    usernameDisplay.textContent = username;
+                } else {
+                    loginBtn.style.display = 'block';
+                    userInfo.style.display = 'none';
+                }
+            }
+
+            loginBtn.addEventListener('click', () => {
+                authOverlay.style.display = 'flex';
+                hiddenInput.blur();
+            });
+
+            authToggle.addEventListener('click', () => {
+                isLoginMode = !isLoginMode;
+                authTitle.textContent = isLoginMode ? 'Login' : 'Sign Up';
+                authBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
+                authToggle.textContent = isLoginMode ? 'Need an account? Sign Up' : 'Already have an account? Login';
+                fullNameGroup.style.display = isLoginMode ? 'none' : 'block';
+            });
+
+            authOverlay.addEventListener('click', (e) => {
+                if (e.target === authOverlay) {
+                    authOverlay.style.display = 'none';
+                    hiddenInput.focus();
+                }
+            });
+
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(authForm);
+                const data = Object.fromEntries(formData.entries());
+                
+                const endpoint = isLoginMode ? '/login' : '/register';
+                const body = isLoginMode ? 
+                    JSON.stringify({ username_or_email: data.username, password: data.password }) :
+                    JSON.stringify({ username: data.username, email: data.email, password: data.password, full_name: data.full_name });
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: body
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (isLoginMode) {
+                            localStorage.setItem('access_token', result.access_token);
+                            localStorage.setItem('username', data.username);
+                            authOverlay.style.display = 'none';
+                            updateAuthUI();
+                            hiddenInput.focus();
+                        } else {
+                            // After register, switch to login
+                            isLoginMode = true;
+                            authToggle.click();
+                            alert('Registration successful! Please login.');
+                        }
+                    } else {
+                        const err = await response.json();
+                        alert(err.detail || 'Authentication failed');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Server error');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('username');
+                updateAuthUI();
+                hiddenInput.focus();
+            });
+
+            // Initial UI update
+            updateAuthUI();
+
+            console.log('🖊️  TypeJaldi.com - Sketch Edition Ready!');
+            console.log('   Level ' + getLevelData(userProgress.totalXP).level + ' - ' + getLevelData(userProgress
+                .totalXP).title);
+            console.log('   Total XP: ' + userProgress.totalXP);
+            console.log('   Best WPM: ' + userProgress.bestWPM);
+            console.log('   Tests Completed: ' + userProgress.testsCompleted);
+            console.log('   ✍️  Start typing to begin!');
+        })();
+    </script>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-overlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2 id="auth-title">Login</h2>
+            <form id="auth-form" class="auth-form">
+                <input type="text" name="username" placeholder="Username or Email" required>
+                <div id="full-name-group" style="display: none;">
+                    <input type="email" name="email" placeholder="Email (for registration)">
+                    <input type="text" name="full_name" placeholder="Full Name">
+                </div>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" id="auth-submit" class="auth-btn">Login</button>
+                <div id="auth-toggle" class="auth-toggle">Need an account? Sign Up</div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
