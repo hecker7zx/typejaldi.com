@@ -1,43 +1,32 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/login",
-      "dest": "backend/main.py"
+      "source": "/login",
+      "destination": "/api/index"
     },
     {
-      "src": "/register",
-      "dest": "backend/main.py"
+      "source": "/register",
+      "destination": "/api/index"
     },
     {
-      "src": "/test-results",
-      "dest": "backend/main.py"
+      "source": "/test-results",
+      "destination": "/api/index"
     },
     {
-      "src": "/forgot-password",
-      "dest": "backend/main.py"
+      "source": "/forgot-password",
+      "destination": "/api/index"
     },
     {
-      "src": "/reset-password",
-      "dest": "backend/main.py"
+      "source": "/reset-password",
+      "destination": "/api/index"
     },
     {
-      "src": "/me",
-      "dest": "backend/main.py"
+      "source": "/me",
+      "destination": "/api/index"
     },
     {
-      "src": "/auth/.*",
-      "dest": "backend/main.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/auth/:path*",
+      "destination": "/api/index"
     }
   ]
 }
