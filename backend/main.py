@@ -275,3 +275,7 @@ async def reset_password(request: schemas.ResetPassword, db: Session = Depends(g
 @app.get("/reset-password")
 async def get_reset_page():
     return FileResponse(os.path.join(BASE_DIR, "reset-password.html"))
+
+# Serve static files from the root directory (for style.css, app.js, auth.css)
+# This should be at the end to avoid interfering with API routes
+app.mount("/", StaticFiles(directory=BASE_DIR), name="static")
