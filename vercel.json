@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/login",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/register",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/test-results",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/forgot-password",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/reset-password",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/me",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/auth/.*",
+      "dest": "backend/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
